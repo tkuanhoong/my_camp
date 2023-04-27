@@ -10,10 +10,10 @@ class MyCamp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       title: 'MyCamp - Campsite Wiki',
       theme: ThemeData(
-      fontFamily: 'Poppins',
-      primaryColor: Colors.indigo,
-      primarySwatch: Colors.indigo,
-      scaffoldBackgroundColor: Colors.white,
+        fontFamily: 'Poppins',
+        primaryColor: Colors.indigo,
+        primarySwatch: Colors.indigo,
+        scaffoldBackgroundColor: Colors.white,
       ),
       routerConfig: router,
     );
