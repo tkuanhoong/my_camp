@@ -52,7 +52,45 @@ class _LoginState extends State<Login> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text('Login Screen'),
+                    Align(
+                    child: Image.asset('assets/images/logo.png', height: 150, width: 150,),
+                  ),
+                    const Text(
+                    'Login', 
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                    color: Colors.black, 
+                    fontSize: 25.0,
+                    fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  ),
+                  RichText(text:  const TextSpan(
+                  children: [
+                     TextSpan(
+                      text: 'Dont have an account? ',
+                      style:  TextStyle(
+                      color: Colors.black, 
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.normal,
+                      ),
+                    ),
+                    TextSpan(
+                      text: 'Register',
+                      style:  TextStyle(
+                      color: Colors.blue, 
+                      fontSize: 12.0,
+                      fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ],
+                  ),
+                  ),
+                  const SizedBox(
+                    height: 20.0,
+                  ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
@@ -67,11 +105,14 @@ class _LoginState extends State<Login> {
                             controller: _phoneController,
                             autofocus: false,
                             cursorColor: Theme.of(context).primaryColor,
-                            decoration: const InputDecoration(
-                                border: OutlineInputBorder(),
+                            decoration:  const InputDecoration(
+                              labelText: 'Phone Number',
+                              hintText: 'Enter your phone number',
+                              contentPadding: EdgeInsets.symmetric(vertical: 4.0, horizontal: 10.0),
+                                // border: OutlineInputBorder(),
                                 counterText: '',
                                 hintStyle: TextStyle(
-                                    color: Colors.black, fontSize: 20.0)),
+                                    color: Colors.black, fontSize: 15.0)),
                             inputFormatters: <TextInputFormatter>[
                               FilteringTextInputFormatter.digitsOnly
                             ],
@@ -80,7 +121,15 @@ class _LoginState extends State<Login> {
                         )
                       ],
                     ),
+                    const SizedBox(
+                      height: 20.0,
+                    ),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 140.0),
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20.0))),
                         onPressed: () {
                           _sendOtp(
                               phoneNumber: _phoneController.text,
