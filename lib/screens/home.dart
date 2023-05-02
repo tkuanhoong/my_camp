@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
@@ -13,9 +14,14 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       body: Center(
-        child: Text('Home Screen'),
+        child: ElevatedButton(
+          onPressed: (){
+            context.goNamed('login');
+          },
+          child: Text('test'),
+        ),
       ),
     );
   }
