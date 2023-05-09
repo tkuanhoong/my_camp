@@ -84,7 +84,7 @@ class _HomeState extends State<Home> {
           SizedBox(height: 4.0),
           Text(
             description,
-            style: TextStyle(fontSize: 14.0),
+            style: TextStyle(fontSize: 10.0),
           ),
         ],
       ),
@@ -224,9 +224,9 @@ class _HomeState extends State<Home> {
                         shrinkWrap: true,
                         childAspectRatio: 1.0,
                         children: [
-                          _buildCard('Campsite 1', '⭐⭐⭐⭐',
+                          _buildCard('Campsite 1', 'Johor Bahru, Johor',
                               'assets/images/home_campsite1.png'),
-                          _buildCard('Campsite 2', '⭐⭐',
+                          _buildCard('Campsite 2', 'Perak, Ipoh',
                               'assets/images/home_campsite2.png'),
                         ],
                       ),
@@ -322,9 +322,9 @@ class _HomeState extends State<Home> {
                         shrinkWrap: true,
                         childAspectRatio: 1.0,
                         children: [
-                          _buildCard('Campsite 1', '⭐⭐⭐⭐',
+                          _buildCard('Campsite 1', 'Johor Bahru, Johor',
                               'assets/images/home_campsite1.png'),
-                          _buildCard('Campsite 2', '⭐⭐',
+                          _buildCard('Campsite 2', 'Perak, Ipoh',
                               'assets/images/home_campsite2.png'),
                         ],
                       ),
