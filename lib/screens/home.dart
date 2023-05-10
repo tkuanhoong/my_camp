@@ -1,7 +1,11 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_camp/screens/welcome.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
+import 'package:my_camp/logic/cubits/session/session_cubit.dart';
+
+import 'auth/verify_email_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,9 +15,7 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-
-  FocusNode _focusNode = FocusNode();
+  final FocusNode _focusNode = FocusNode();
 
   @override
   void dispose() {
@@ -21,18 +23,14 @@ class _HomeState extends State<Home> {
     super.dispose();
   }
 
-  Widget buildGridItem(String label, IconData icon) {
+  Widget _buildGridItem(String label, IconData icon) {
     return InkWell(
       onTap: () {
         // Handle icon tap here
         print('Tapped on $label');
       },
       child: Container(
-        // decoration: BoxDecoration(
-        //   shape: BoxShape.circle,
-        //   border: Border.all(color: Colors.grey),
-        // ),
-        padding: EdgeInsets.all(0),
+        padding: const EdgeInsets.all(0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -48,8 +46,8 @@ class _HomeState extends State<Home> {
                 color: Colors.white,
               ),
             ),
-            SizedBox(height: 8.0),
-            Text(label, style: TextStyle(fontSize: 12)),
+            const SizedBox(height: 8.0),
+            Text(label, style: const TextStyle(fontSize: 12)),
           ],
         ),
       ),
@@ -93,317 +91,197 @@ class _HomeState extends State<Home> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Container(
-                padding: EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(),
-                          borderRadius: BorderRadius.circular(25),
-                        ),
+    return WillPopScope(
+      onWillPop: () async => false,
+      child: Scaffold(
+        body: BlocConsumer<AuthBloc, AuthState>(
+          listener: (_, state) {
+            if (state is AuthError) {
+              // Displaying the error message if the user is not authenticated
+              ScaffoldMessenger.of(context)
+                  .showSnackBar(SnackBar(content: Text(state.error)));
+              context.pushReplacementNamed('login');
+            }
+          },
+          builder: (_, state) {
+            if (state is VerifyingEmail) {
+              return VerifyEmailScreen(email: state.email);
+            }
+            return SafeArea(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                         child: Row(
                           children: [
                             Expanded(
-                              child: TextFormField(
-                                readOnly: true,
-                                focusNode: _focusNode,
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        //Change Welcome to search page
-                                        builder: (context) => Welcome()),
-                                  );
-                                },
-                                decoration: InputDecoration(
-                                  hintText: 'Search',
-                                  border: InputBorder.none,
-                                  contentPadding:
-                                      EdgeInsets.symmetric(horizontal: 15),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border: Border.all(),
+                                  borderRadius: BorderRadius.circular(25),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        focusNode: _focusNode,
+                                        onTap: () {},
+                                        decoration: const InputDecoration(
+                                          hintText: 'Search',
+                                          border: InputBorder.none,
+                                          contentPadding:
+                                              EdgeInsets.symmetric(horizontal: 15),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.search),
+                                      onPressed: () {},
+                                    ),
+                                  ],
                                 ),
                               ),
                             ),
                             IconButton(
-                              icon: Icon(Icons.search),
+                              icon: const Icon(Icons.person),
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      //Change Welcome to search page
-                                      builder: (context) => Welcome()),
-                                );
+                                context.goNamed('profile');
                               },
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    IconButton(
-                      icon: Icon(Icons.person),
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          // change Welcome to profile page
-                          MaterialPageRoute(builder: (context) => Welcome()),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(15, 20, 15, 0),
-                child: Card(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(
-                        16.0), // Set circular border radius
-                  ),
-                  color: Colors.indigo[50], // Set light grey color
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: GridView.count(
-                          // crossAxisSpacing: 10,
-                          physics: NeverScrollableScrollPhysics(),
-                          crossAxisCount: 3,
-                          shrinkWrap: true,
-                          childAspectRatio: 1,
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                        child: Card(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                                16.0), // Set circular border radius
+                          ),
+                          color: Colors.indigo[50], // Set light grey color
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: GridView.count(
+                                  // crossAxisSpacing: 10,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  crossAxisCount: 3,
+                                  shrinkWrap: true,
+                                  childAspectRatio: 1,
+                                  children: [
+                                    _buildGridItem('My Bookings', Icons.event),
+                                    _buildGridItem(
+                                        'Favorites', Icons.favorite_rounded),
+                                    _buildGridItem('My Campsites', Icons.landscape),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            buildGridItem('My Bookings', Icons.event),
-                            buildGridItem('My Campsites', Icons.landscape),
-                            buildGridItem('Favorites', Icons.favorite_rounded),
+                            const Text(
+                              'Recommended Campsites',
+                              style: TextStyle(
+                                  // fontWeight: FontWeight.bold,
+                                  // fontSize: 16,
+                                  ),
+                            ),
+                            Row(children: const <Widget>[
+                              Text('See all',
+                                  style: TextStyle(
+                                    // fontSize: 16,
+                                    decoration: TextDecoration.underline,
+                                  )),
+                              Icon(Icons.arrow_forward),
+                            ]),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: GridView.count(
+                                crossAxisSpacing: 10,
+                                physics: const NeverScrollableScrollPhysics(),
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                childAspectRatio: 1.0,
+                                children: [
+                                  _buildCard('Campsite 1', 'Johor Bahru, Johor',
+                                      'assets/images/home_campsite1.png'),
+                                  _buildCard('Campsite 2', 'Perak, Ipoh',
+                                      'assets/images/home_campsite2.png'),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Upcoming Campsites',
+                              style: TextStyle(
+                                  // fontWeight: FontWeight.bold,
+                                  // fontSize: 16,
+                                  ),
+                            ),
+                            Row(children: const <Widget>[
+                              Text('See all',
+                                  style: TextStyle(
+                                    // fontSize: 16,
+                                    decoration: TextDecoration.underline,
+                                  )),
+                              Icon(Icons.arrow_forward),
+                            ]),
+                          ],
+                        ),
+                      ),
+                      Container(
+                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: GridView.count(
+                                crossAxisSpacing: 10,
+                                physics: const NeverScrollableScrollPhysics(),
+                                crossAxisCount: 2,
+                                shrinkWrap: true,
+                                childAspectRatio: 1.0,
+                                children: [
+                                  _buildCard('Campsite 1', 'Johor Bahru, Johor',
+                                      'assets/images/home_campsite1.png'),
+                                  _buildCard('Campsite 2', 'Perak, Ipoh',
+                                      'assets/images/home_campsite2.png'),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
                       ),
                     ],
                   ),
                 ),
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Recommended Campsites',
-                      style: TextStyle(
-                          // fontWeight: FontWeight.bold,
-                          // fontSize: 16,
-                          ),
-                    ),
-                    Row(children: [
-                      Text('See all',
-                          style: TextStyle(
-                            // fontSize: 16,
-                            decoration: TextDecoration.underline,
-                          )),
-                      Icon(Icons.arrow_forward),
-                    ]),
-                  ],
-                ),
-              ),
-//////////////////////////////////////////////////
-              Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisSpacing: 10,
-                        physics: NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        childAspectRatio: 1.0,
-                        children: [
-                          _buildCard('Campsite 1', 'Johor Bahru, Johor',
-                              'assets/images/home_campsite1.png'),
-                          _buildCard('Campsite 2', 'Perak, Ipoh',
-                              'assets/images/home_campsite2.png'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: Padding(
-              //         padding: EdgeInsets.fromLTRB(20, 20, 10, 0),
-              //         child: Column(
-              //           children: [
-              //             InkWell(
-              //               onTap: () {},
-              //               child: SizedBox(
-              //                 // width: 80,
-              //                 // height: 80,
-              //                 child: ClipRRect(
-              //                   borderRadius: BorderRadius.circular(5),
-              //                   child: Image.asset(
-              //                     'assets/images/home_campsite1.png',
-              //                     fit: BoxFit.cover,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //     Expanded(
-              //       child: Padding(
-              //         padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
-              //         child: Column(
-              //           children: [
-              //             InkWell(
-              //               onTap: () {},
-              //               child: SizedBox(
-              //                 // width: 80,
-              //                 // height: 80,
-              //                 child: ClipRRect(
-              //                   borderRadius: BorderRadius.circular(5),
-              //                   child: Image.asset(
-              //                     'assets/images/home_campsite2.png',
-              //                     fit: BoxFit.cover,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-///////////////////////////////////////////////////////////
-              Padding(
-                padding: EdgeInsets.fromLTRB(20, 30, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Upcoming Campsites',
-                      style: TextStyle(
-                          // fontWeight: FontWeight.bold,
-                          // fontSize: 16,
-                          ),
-                    ),
-                    Row(children: [
-                      Text('See all',
-                          style: TextStyle(
-                            // fontSize: 16,
-                            decoration: TextDecoration.underline,
-                          )),
-                      Icon(Icons.arrow_forward),
-                    ]),
-                  ],
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.fromLTRB(20, 10, 20, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: GridView.count(
-                        crossAxisSpacing: 10,
-                        physics: NeverScrollableScrollPhysics(),
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        childAspectRatio: 1.0,
-                        children: [
-                          _buildCard('Campsite 1', 'Johor Bahru, Johor',
-                              'assets/images/home_campsite1.png'),
-                          _buildCard('Campsite 2', 'Perak, Ipoh',
-                              'assets/images/home_campsite2.png'),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: Padding(
-              //         padding: EdgeInsets.fromLTRB(20, 20, 10, 0),
-              //         child: Column(
-              //           children: [
-              //             InkWell(
-              //               onTap: () {},
-              //               child: SizedBox(
-              //                 // width: 80,
-              //                 // height: 80,
-              //                 child: ClipRRect(
-              //                   borderRadius: BorderRadius.circular(5),
-              //                   child: Image.asset(
-              //                     'assets/images/home_campsite1.png',
-              //                     fit: BoxFit.cover,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //     Expanded(
-              //       child: Padding(
-              //         padding: EdgeInsets.fromLTRB(10, 20, 20, 0),
-              //         child: Column(
-              //           children: [
-              //             InkWell(
-              //               onTap: () {},
-              //               child: SizedBox(
-              //                 // width: 80,
-              //                 // height: 80,
-              //                 child: ClipRRect(
-              //                   borderRadius: BorderRadius.circular(5),
-              //                   child: Image.asset(
-              //                     'assets/images/home_campsite2.png',
-              //                     fit: BoxFit.cover,
-              //                   ),
-              //                 ),
-              //               ),
-              //             ),
-              //           ],
-              //         ),
-              //       ),
-              //     ),
-              //   ],
-              // ),
-            ],
-          ),
+              );
+          },
         ),
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   items: [
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.home),
-      //       label: 'Home',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.favorite),
-      //       label: 'Favourites',
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: Icon(Icons.person),
-      //       label: 'Profile',
-      //     ),
-      //   ],
-      //   currentIndex: 0,
-      //   onTap: (int index) {},
-      // ),
     );
   }
 }

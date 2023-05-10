@@ -63,7 +63,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '252558251910',
     projectId: 'mycamp-5236e',
     storageBucket: 'mycamp-5236e.appspot.com',
-    androidClientId: '252558251910-t285hdf05mn55nbgviu1m1qg2ic7s6lt.apps.googleusercontent.com',
+    androidClientId: '252558251910-dp2dj2j8f21g8d6nclm0jmin7k1jlt11.apps.googleusercontent.com',
     iosClientId: '252558251910-iohbvvql6p4av17h8vuundtiga5hsek2.apps.googleusercontent.com',
     iosBundleId: 'com.example.myCamp',
   );

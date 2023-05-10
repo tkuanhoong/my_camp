@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "252558251910-s391ggtc086lljgguefs1ntmm8u1hd7s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.my_camp",
+            "certificate_hash": "81be3e4dc5aab2b14a5ca6aecd9a293927a9b9de"
+          }
+        },
+        {
           "client_id": "252558251910-k3e9pmmkpttvr3kd66r5impdulaprbrc.apps.googleusercontent.com",
           "client_type": 3
         }

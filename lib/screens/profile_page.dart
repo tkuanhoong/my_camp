@@ -1,19 +1,31 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:mycamp/update_profile.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:my_camp/data/repository/auth_repository.dart';
+import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
+import 'package:my_camp/logic/cubits/session/session_cubit.dart';
+// import 'package:mycamp/update_profile.dart';
 
-class ProfilePage extends StatelessWidget {
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
+  @override
+  State<ProfilePage> createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Color.fromARGB(0, 255, 255, 255),
         leading: IconButton(
-          onPressed: () {},
-          icon: Icon(Icons.home),
+          onPressed: () {
+            context.pushReplacementNamed('home');
+          },
+          icon: const Icon(Icons.home),
         ),
-        title: Text(
+        title: const Text(
           'Profile',
         ),
         centerTitle: true,
@@ -29,20 +41,18 @@ class ProfilePage extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ProfilePhoto_Widget(),
-                  Column(
-                    children: [
-                      UsernameTxt(),
-                      emailTxt(),
-                    ],
-                  ),
+                  _buildUserInfo(),
                 ],
               ),
               SpacerH30(),
-              Divider(),
+              const Divider(),
               SpacerH30(),
-              Text(
-                '\t\t\tMy Account',
-                style: TextStyle(fontSize: 18),
+              Container(
+                margin: const EdgeInsets.only(left: 14),
+                child: const Text(
+                  'My Account',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
               ),
               SpacerH30(),
               Profile_widget(
@@ -50,12 +60,12 @@ class ProfilePage extends StatelessWidget {
                   icon: Icons.edit_note_outlined,
                   iconsize: 35,
                   onPress: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UpdateProfile(),
-                      ),
-                    );
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //     builder: (context) => UpdateProfile(),
+                    //   ),
+                    // );
                   }),
               Profile_widget(
                 title: "Settings",
@@ -72,7 +82,11 @@ class ProfilePage extends StatelessWidget {
         height: 50,
         margin: const EdgeInsets.all(10),
         child: ElevatedButton(
-          onPressed: () {},
+          onPressed: () {
+             BlocProvider.of<SessionCubit>(context).clearUserSession();
+             BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
+            context.goNamed('login');
+          },
           child: const Center(
             child: Text('Log Out'),
           ),
@@ -82,23 +96,35 @@ class ProfilePage extends StatelessWidget {
   }
 
   SizedBox SpacerH30() {
-    return SizedBox(
+    return const SizedBox(
       height: 30,
     );
   }
 
   Text emailTxt() {
     return Text(
-      'Email Address',
-      style: TextStyle(fontSize: 12),
+      context.read<SessionCubit>().state.email ?? 'User Email',
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+      maxLines: 2,
     );
   }
 
   Text UsernameTxt() {
     return Text(
-      'Username',
-      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-      maxLines: 2,
+        context.read<SessionCubit>().state.userName ?? 'User Name',
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+      );
+  }
+
+  SizedBox _buildUserInfo() {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width * 0.5,
+      child: Column(
+        children: [UsernameTxt(), emailTxt()],
+      ),
     );
   }
 
@@ -108,22 +134,22 @@ class ProfilePage extends StatelessWidget {
       height: 150,
       child: ClipRRect(
         borderRadius: BorderRadius.circular(150),
-        child: Image(
+        child: const Image(
           fit: BoxFit.cover,
-          image: AssetImage('assets/yanliu.png'),
+          image: AssetImage('assets/images/logo.png'),
         ),
       ),
     );
   }
 
   SizedBox SpacerH10() {
-    return SizedBox(
+    return const SizedBox(
       height: 10,
     );
   }
 
   SizedBox SpacerW50() {
-    return SizedBox(
+    return const SizedBox(
       width: 50,
     );
   }
@@ -152,11 +178,11 @@ class Profile_widget extends StatelessWidget {
         width: 45,
         height: 45,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            color: Colors.blue.withOpacity(0.4)),
+            borderRadius: BorderRadius.circular(10), color: Colors.indigo),
         child: Icon(
           icon,
           size: iconsize,
+          color: Colors.white,
         ),
       ),
       title: Text(title),
@@ -164,9 +190,11 @@ class Profile_widget extends StatelessWidget {
         width: 30,
         height: 30,
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(100),
-            color: Colors.grey.withOpacity(0.1)),
-        child: Icon(Icons.chevron_right_rounded),
+            borderRadius: BorderRadius.circular(100), color: Colors.indigo),
+        child: Icon(
+          Icons.chevron_right_rounded,
+          color: Colors.white,
+        ),
       ),
     );
   }

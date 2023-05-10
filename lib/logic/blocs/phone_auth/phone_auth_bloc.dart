@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -11,6 +12,7 @@ part 'phone_auth_state.dart';
 class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
   final PhoneAuthRepository phoneAuthRepository;
   FirebaseAuth auth = FirebaseAuth.instance;
+  final db = FirebaseFirestore.instance;
 
   PhoneAuthBloc({required this.phoneAuthRepository})
       : super(PhoneAuthInitial()) {
@@ -84,8 +86,24 @@ class PhoneAuthBloc extends Bloc<PhoneAuthEvent, PhoneAuthState> {
     // and then will emit the [PhoneAuthVerifySuccess] state after successful login
     try {
             // emit(PhoneAuthLoadInProgess());
-      await auth.signInWithCredential(event.credential).then((userData) {
+      await auth.signInWithCredential(event.credential).then((userData) async{
         if (userData.user != null) {
+          await db.collection('users').doc(userData.user!.uid).get().then((user) async {
+            if(user.exists){
+              await db.collection('users').doc(userData.user!.uid).update({
+                'lastTimeLoggedIn': DateTime.now(),
+              });
+            }else {
+              await db.collection('users').doc(userData.user!.uid).set({
+              'id': userData.user!.uid,
+              'name': 'Test User',
+              'phone': userData.user!.phoneNumber,
+              'createdAt': DateTime.now(),
+              'lastTimeLoggedIn': DateTime.now(),
+            });
+            }
+          });
+          
           emit(PhoneAuthVerifySuccess());
         }
       });

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_camp/constant/welcome_page_items.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 
 class Welcome extends StatefulWidget {
   const Welcome({super.key});
@@ -74,16 +75,13 @@ class _WelcomeState extends State<Welcome> {
             width: 10.0,
             decoration: BoxDecoration(
                 color: currentPage?.round() == index
-                    ? const Color(0XFF256075)
-                    : const Color(0XFF256075).withOpacity(0.2),
+                    ? Theme.of(context).primaryColor
+                    : Theme.of(context).primaryColor.withOpacity(0.2),
                 borderRadius: BorderRadius.circular(10.0)),
           ));
   final _pageViewController = PageController();
-  // code getter for shared preference
-  final Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-  Future<void> _setFirstLaunched() async {
-    final SharedPreferences prefs = await _prefs;
-    await prefs.setBool('isFirstLaunched', true);
+  _setFirstLaunched(context) {
+    BlocProvider.of<SessionCubit>(context).setFirstLaunched();
   }
 
   @override
@@ -119,9 +117,9 @@ class _WelcomeState extends State<Welcome> {
                                 const EdgeInsets.symmetric(horizontal: 101.0),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0))),
-                        onPressed: () async {
-                          context.replaceNamed('login');
-                          await _setFirstLaunched();
+                        onPressed: () {
+                          _setFirstLaunched(context);
+                          context.pushReplacementNamed('login');
                         },
                         child: const Text('Get Started!')),
                   ),

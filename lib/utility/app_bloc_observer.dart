@@ -8,7 +8,7 @@ class AppBlocObserver extends BlocObserver{
   }
   @override
   void onClose(BlocBase bloc) {
-    // TODO: implement onClose
+    print(bloc);
     super.onClose(bloc);
   }
 
@@ -30,7 +30,7 @@ class AppBlocObserver extends BlocObserver{
   }
   @override
   void onTransition(Bloc bloc, Transition transition) {
-    // TODO: implement onTransition
+    print(transition);
     super.onTransition(bloc, transition);
   }
 }
