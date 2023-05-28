@@ -26,8 +26,8 @@ class UpdateProfile extends StatelessWidget {
               Stack(
                 children: [
                   SizedBox(
-                    height: 120,
-                    width: 120,
+                    height: 200,
+                    width: 200,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(100),
                       child: const Image(
@@ -36,11 +36,11 @@ class UpdateProfile extends StatelessWidget {
                     ),
                   ),
                   Positioned(
-                    bottom: 10,
-                    right: 10,
+                    bottom: 20,
+                    right: 20,
                     child: Container(
-                      height: 35,
-                      width: 35,
+                      height: 50,
+                      width: 50,
                       decoration: BoxDecoration(
                         color: Colors.indigo,
                         borderRadius: BorderRadius.circular(100),
