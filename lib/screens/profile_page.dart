@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:my_camp/data/repository/auth_repository.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
-// import 'package:mycamp/update_profile.dart';
+import 'update_profile.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -60,12 +60,12 @@ class _ProfilePageState extends State<ProfilePage> {
                   icon: Icons.edit_note_outlined,
                   iconsize: 35,
                   onPress: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => UpdateProfile(),
-                    //   ),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UpdateProfile(),
+                      ),
+                    );
                   }),
               Profile_widget(
                 title: "Settings",
@@ -83,8 +83,8 @@ class _ProfilePageState extends State<ProfilePage> {
         margin: const EdgeInsets.all(10),
         child: ElevatedButton(
           onPressed: () {
-             BlocProvider.of<SessionCubit>(context).clearUserSession();
-             BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
+            BlocProvider.of<SessionCubit>(context).clearUserSession();
+            BlocProvider.of<AuthBloc>(context).add(SignOutRequested());
             context.goNamed('login');
           },
           child: const Center(
@@ -111,12 +111,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Text UsernameTxt() {
     return Text(
-        context.read<SessionCubit>().state.userName ?? 'User Name',
-        textAlign: TextAlign.center,
-        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
-      );
+      context.read<SessionCubit>().state.userName ?? 'User Name',
+      textAlign: TextAlign.center,
+      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+      overflow: TextOverflow.ellipsis,
+      maxLines: 2,
+    );
   }
 
   SizedBox _buildUserInfo() {
