@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_camp/constant/home_page_menu_items.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 
@@ -27,6 +28,20 @@ class _HomeState extends State<Home> {
     return InkWell(
       onTap: () {
         // Handle icon tap here
+        switch (label) {
+          case "My Campsites":
+            context.goNamed('manage-campsite');
+            break;
+          case "Favorites":
+            // context.goNamed('manage-campsite');
+                    print('Tapped on $label');
+            break;
+          case "My Bookings":
+            // context.goNamed('manage-campsite');
+                    print('Tapped on $label');
+            break;
+          default:
+        }
         print('Tapped on $label');
       },
       child: Container(
@@ -121,26 +136,29 @@ class _HomeState extends State<Home> {
                                   border: Border.all(),
                                   borderRadius: BorderRadius.circular(25),
                                 ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: TextFormField(
-                                        readOnly: true,
-                                        focusNode: _focusNode,
-                                        onTap: () {},
-                                        decoration: const InputDecoration(
-                                          hintText: 'Search',
-                                          border: InputBorder.none,
-                                          contentPadding:
-                                              EdgeInsets.symmetric(horizontal: 15),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    context.goNamed('search');
+                                  },
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: TextFormField(
+                                          readOnly: true,
+                                          focusNode: _focusNode,
+                                          onTap: () {
+                                            context.goNamed('search');
+                                          },
+                                          decoration: const InputDecoration(
+                                            suffixIcon: Icon(Icons.search, color: Colors.grey,),
+                                            hintText: 'Search',
+                                            border: InputBorder.none,
+                                            contentPadding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+                                          ),
                                         ),
                                       ),
-                                    ),
-                                    IconButton(
-                                      icon: Icon(Icons.search),
-                                      onPressed: () {},
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
                               ),
                             ),

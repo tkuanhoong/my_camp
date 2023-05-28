@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:my_camp/data/repository/campsite_repository.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 import 'package:my_camp/screens/auth/forgot_screen.dart';
 import 'package:my_camp/screens/auth/login_screen.dart';
 import 'package:my_camp/screens/auth/register_screen.dart';
 import 'package:my_camp/screens/auth/verify_email_screen.dart';
+import 'package:my_camp/screens/campsite_details.dart';
 import 'package:my_camp/screens/home.dart';
+import 'package:my_camp/screens/manage_campsite.dart';
+import 'package:my_camp/screens/search/search_campsite_page.dart';
 import 'package:my_camp/screens/welcome.dart';
 import 'package:my_camp/screens/profile_page.dart';
 
@@ -85,7 +90,29 @@ final GoRouter router = GoRouter(
                     path: 'profile',
                     builder: (BuildContext context, GoRouterState state) {
                       return const ProfilePage();
-                    })
+                    }),
+                GoRoute(
+                    name: 'manage-campsite',
+                    path: 'campsites',
+                    builder: (BuildContext context, GoRouterState state) {
+                      return const ManageCampsite();
+                    },
+                    routes: [
+                      GoRoute(
+                        path: 'campsite/:campsiteId',
+                        name: 'campsite-details',
+                        builder: (BuildContext context, GoRouterState state){
+                          return CampsiteDetails(campsiteId: state.params['campsiteId']!);
+                        },
+                      )
+                    ]),
+                GoRoute(
+                  name: 'search',
+                  path: 'search',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const SearchCampsitePage();
+                  },
+                )
               ]),
         ]),
     // GoRoute(

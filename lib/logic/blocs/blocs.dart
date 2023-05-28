@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_camp/data/repository/auth_repository.dart';
+import 'package:my_camp/data/repository/campsite_repository.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
+import 'package:my_camp/logic/blocs/search/search_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 
 class BlocWidget extends StatelessWidget {
@@ -11,12 +13,15 @@ class BlocWidget extends StatelessWidget {
   final AuthRepository _authRepository = AuthRepository();
   final AuthBloc _authBloc = AuthBloc(authRepository: AuthRepository());
   final SessionCubit _sessionCubit = SessionCubit();
+  final CampsiteRepository _campsiteRepository = CampsiteRepository();
+  final SearchBloc _searchBloc = SearchBloc(repository: CampsiteRepository());
 
   @override
   Widget build(BuildContext context) {
     return MultiRepositoryProvider(
         providers: [
           RepositoryProvider.value(value: _authRepository),
+          RepositoryProvider.value(value: _campsiteRepository),
         ],
         child: MultiBlocProvider(providers: [
           BlocProvider<AuthBloc>.value(
@@ -24,6 +29,9 @@ class BlocWidget extends StatelessWidget {
           ),
           BlocProvider<SessionCubit>.value(
             value: _sessionCubit,
+          ),
+          BlocProvider<SearchBloc>.value(
+            value: _searchBloc,
           ),
         ], child: child));
   }

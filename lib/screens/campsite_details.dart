@@ -3,7 +3,8 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'review_page.dart';
 
 class CampsiteDetails extends StatefulWidget {
-  const CampsiteDetails({Key? key});
+  final String campsiteId;
+  const CampsiteDetails({super.key, required this.campsiteId});
 
   @override
   State<CampsiteDetails> createState() => _CampsiteDetailsState();
