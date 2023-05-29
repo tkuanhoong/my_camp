@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_camp/data/repository/auth_repository.dart';
 import 'package:my_camp/data/repository/campsite_repository.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
+import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/blocs/search/search_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 
@@ -15,6 +16,7 @@ class BlocWidget extends StatelessWidget {
   final SessionCubit _sessionCubit = SessionCubit();
   final CampsiteRepository _campsiteRepository = CampsiteRepository();
   final SearchBloc _searchBloc = SearchBloc(repository: CampsiteRepository());
+  final CampsiteBloc _campsiteBloc = CampsiteBloc();
 
   @override
   Widget build(BuildContext context) {
@@ -32,6 +34,9 @@ class BlocWidget extends StatelessWidget {
           ),
           BlocProvider<SearchBloc>.value(
             value: _searchBloc,
+          ),
+          BlocProvider<CampsiteBloc>.value(
+            value: _campsiteBloc,
           ),
         ], child: child));
   }

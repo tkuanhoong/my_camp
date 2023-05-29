@@ -31,4 +31,40 @@ class CampsiteService {
         .map((doc) => Campsite.fromMap(doc.data() as Map<String, dynamic>))
         .toList();
   }
+
+  Future<Campsite?> fetchSingleCampsiteData(id) async{
+    QuerySnapshot document = await _db.collectionGroup('campsites').where('id', isEqualTo: id).get();
+    if(document.docs.isNotEmpty){
+      return Campsite.fromMap(document.docs.first.data() as Map<String, dynamic>);
+    } else {
+      return null;
+    }
+  }
+
+  Future updateCampsiteData(Campsite campsite, String userId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('campsites')
+        .doc(campsite.id)
+        .update(campsite.toMap());
+  }
+
+  Future deleteCampsiteData(Campsite campsite, String userId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('campsites')
+        .doc(campsite.id)
+        .delete();
+  }
+
+  Future addCampsiteData(Campsite campsite, String userId) async {
+    await _db
+        .collection('users')
+        .doc(userId)
+        .collection('campsites')
+        .doc(campsite.id)
+        .set(campsite.toMap());
+  }
 }
