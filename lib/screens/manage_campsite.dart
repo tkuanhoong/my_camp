@@ -24,9 +24,13 @@ class _ManageCampsiteState extends State<ManageCampsite> {
   @override
   void initState() {
     _userId = context.read<SessionCubit>().state.id;
-    _fetchCampsites();
     if (!_dataFetched) {
-      _fetchCampsites();
+      context.read<SearchBloc>().add(CampsitesRequested(
+          campsitesList: _campsitesList,
+          keyword: _searchController.text,
+          userId: _userId,
+          firstLoad: true));
+      _dataFetched = true;
     }
     _scrollController.addListener(() {
       _onScroll(context);
@@ -64,7 +68,8 @@ class _ManageCampsiteState extends State<ManageCampsite> {
     if (currentScroll >= (maxScroll * 0.9)) {
       context.read<SearchBloc>().add(CampsitesRequested(
           campsitesList: _campsitesList,
-          keyword: _searchController.text));
+          keyword: _searchController.text,
+          userId: _userId));
     }
   }
 
