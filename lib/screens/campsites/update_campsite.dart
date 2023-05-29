@@ -22,6 +22,7 @@ class UpdateCampsitePage extends StatefulWidget {
 }
 
 class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
+  bool _isInitialized = false;
   late Campsite _campsite;
   String? _selectedState;
   final _formKey = GlobalKey<FormState>();
@@ -95,7 +96,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         'name': _nameController.text,
         'description': _descriptionController.text,
         'address': _addressController.text,
-        'state': _campsite.state,
+        'state': _selectedState ?? _campsite.state,
         'faq': _faqEntries!
             .map((faq) =>
                 {"question": faq["question"], "answer": faq["question"]})
@@ -161,12 +162,146 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
     }
   }
 
+  Future<void> _deleteCampsite() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      // Show a success message to the user
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Confirmation'),
+            content: Text('Are you sure you want to delete this campsite?'),
+            actions: [
+              TextButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  // context.goNamed('home');
+                },
+              ),
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  _confirmDeleteCampsite();
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      // Show an error message to the user
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(error.toString()),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _confirmDeleteCampsite() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      String userId = context.read<SessionCubit>().state.id!;
+
+      CollectionReference campsitesCollection = FirebaseFirestore.instance
+          .collection('users')
+          .doc(userId)
+          .collection('campsites');
+
+      DocumentReference campsite = campsitesCollection.doc(_campsite.id);
+
+      await campsite.delete();
+
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Success'),
+            content: Text('Campsite deleted successfully!'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  context.goNamed('home');
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+    } catch (error) {
+      // Show an error message to the user
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text(error.toString()),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
   @override
   initState() {
     context.read<CampsiteBloc>().add(SingleCampsiteRequested(
         campsiteId: widget.campsiteId,
         userId: context.read<SessionCubit>().state.id));
     super.initState();
+    // _campsite = state.campsite;
+    // _faqEntries = _campsite.faq;
+    // _nameController.text = _campsite.name;
+    // _descriptionController.text = _campsite.description;
+    // _addressController.text = _campsite.address;
   }
 
   @override
@@ -192,12 +327,15 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
           );
         }
         if (state is CampsiteLoaded) {
-          _campsite = state.campsite;
-          _faqEntries = _campsite.faq;
-          _nameController.text = _campsite.name;
-          _descriptionController.text = _campsite.description;
-          _addressController.text = _campsite.address;
-          // _stateController.value = _campsite.state.;
+          if (_isInitialized == false) {
+            _campsite = state.campsite;
+            _faqEntries = _campsite.faq;
+            _nameController.text = _campsite.name;
+            _descriptionController.text = _campsite.description;
+            _addressController.text = _campsite.address;
+            // _stateController.value = _campsite.state.;
+            _isInitialized = true;
+          }
           print(_campsite.name);
           return Stack(children: [
             SingleChildScrollView(
@@ -403,18 +541,41 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
                       ),
                       SizedBox(height: 20),
                       Center(
-                        child: ElevatedButton(
-                          onPressed: _createCampsite,
-                          child: Text('Save Changes'),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.indigo,
-                            textStyle: TextStyle(fontSize: 20),
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 40, vertical: 15),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Flexible(
+                              child: ElevatedButton(
+                                onPressed: _deleteCampsite,
+                                child: Text('Delete'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.red,
+                                  textStyle: TextStyle(fontSize: 20),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
                             ),
-                          ),
+                            SizedBox(width: 20),
+                            Flexible(
+                              child: ElevatedButton(
+                                onPressed: _createCampsite,
+                                child: Text('Update'),
+                                style: ElevatedButton.styleFrom(
+                                  primary: Colors.indigo,
+                                  textStyle: TextStyle(fontSize: 20),
+                                  padding: EdgeInsets.symmetric(
+                                      horizontal: 40, vertical: 15),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                       SizedBox(height: 20),
@@ -468,7 +629,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
             }
             return null;
           },
-          onChanged: (value) => _faqEntries![index].question = value,
+          onChanged: (value) => _faqEntries![index]["question"] = value,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Enter the question',
@@ -488,7 +649,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
             }
             return null;
           },
-          onChanged: (value) => _faqEntries![index].answer = value,
+          onChanged: (value) => _faqEntries![index]["answer"] = value,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Enter the answer',
