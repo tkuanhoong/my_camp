@@ -48,8 +48,9 @@ class SessionState extends Equatable {
       isAuthenticated: map['isAuthenticated'] != null
           ? map['isAuthenticated'] as bool
           : null,
-      isFirstLaunched:
-          map['isFirstLaunched'] != null ? map['isFirstLaunched'] as bool : null,
+      isFirstLaunched: map['isFirstLaunched'] != null
+          ? map['isFirstLaunched'] as bool
+          : null,
       id: map['id'] != null ? map['id'] as String : null,
       userName: map['userName'] != null ? map['userName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,

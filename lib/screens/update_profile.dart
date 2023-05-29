@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_camp/data/models/user_model.dart';
-import 'package:my_camp/logic/blocs/bloc/profile_bloc.dart';
+import 'package:my_camp/logic/blocs/profile/profile_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 
 class UpdateProfile extends StatefulWidget {
@@ -20,6 +20,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
   UserModel? user;
   @override
   void initState() {
+    context.read<ProfileBloc>().add(
+        ProfileFetchRequested(userId: context.read<SessionCubit>().state.id!));
     _nameController.text = context.read<SessionCubit>().state.userName!;
     _emailController.text = context.read<SessionCubit>().state.email!;
     super.initState();
@@ -58,137 +60,155 @@ class _UpdateProfileState extends State<UpdateProfile> {
               child: CircularProgressIndicator(),
             );
           }
-            return SingleChildScrollView(
-              child: Container(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  children: [
-                    SpacerH(30),
-                    //a profile image edit widget
-                    Stack(
-                      children: [
-                        SizedBox(
-                          height: 200,
-                          width: 200,
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(100),
-                            child: const Image(
-                              image: AssetImage('assets/images/logo.png'),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          bottom: 20,
-                          right: 20,
-                          child: Container(
-                            height: 50,
-                            width: 50,
-                            decoration: BoxDecoration(
-                              color: Colors.indigo,
-                              borderRadius: BorderRadius.circular(100),
-                            ),
-                            child: const Icon(
-                              Icons.camera_alt,
-                              color: Colors.white,
-                              size: 20,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    //spacer
-                    SpacerH(30),
-
-                    Form(
-                      key: _formKey,
-                      child: Column(
+          if (state is PictureChanged) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return SingleChildScrollView(
+            child: Container(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  SpacerH(30),
+                  //a profile image edit widget
+                  BlocBuilder<ProfileBloc, ProfileState>(
+                      builder: (context, state) {
+                    if (state is PictureUploading) {
+                      return const CircularProgressIndicator();
+                    }
+                    if (state is PictureChangedFailure) {
+                      return Text('ERROR');
+                    }
+                    if (state is PictureChanged) {
+                      return Stack(
                         children: [
-                          TextFormField(
-                            controller: _emailController,
-                            enabled: false,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              floatingLabelBehavior:
-                                  FloatingLabelBehavior.always,
-                              label: const Text('Email'),
-                              prefixIcon: Icon(Icons.email),
+                          SizedBox(
+                            height: 200,
+                            width: 200,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: Image.file(state.image),
                             ),
                           ),
-                          SpacerH(15),
-                          TextFormField(
-                            controller: _nameController,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(50),
-                              ),
-                              label: Text('Fullname'),
-                              prefixIcon: Icon(
-                                Icons.person,
+                          Positioned(
+                            bottom: 20,
+                            right: 20,
+                            child: GestureDetector(
+                              onTap: () {
+                                context
+                                    .read<ProfileBloc>()
+                                    .add(AddPictureButtonClicked());
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.indigo,
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
                               ),
                             ),
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            validator: (value) {
-                              return value != null && value.length < 6 ||
-                                      value != null && value.length > 20
-                                  ? 'Min. 6 - Max. 20 characters'
-                                  : null;
-                            },
                           ),
                         ],
-                      ),
-                    ),
-                    //button update profile
-                    SpacerH(40),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 50,
-                      child: ElevatedButton(
-                        onPressed: () {
-                          // TODO Submit form [todo]
-                          // if (_formKey.currentState!.validate()) {
-                          //   context.read<ProfileBloc>().add(
-                          //         ProfileUpdateRequested(
-                          //           imagePath: '',
-                          //           userId:
-                          //               context.read<SessionCubit>().state.id!,
-                          //           name: _nameController.text,
-                          //         ),
-                          //       );
-                          // }
-                        },
-                        child: Text('Update Profile'),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(50),
+                      );
+                    }
+                    return Container();
+                  }),
+                  //spacer
+                  SpacerH(30),
+
+                  Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        TextFormField(
+                          controller: _emailController,
+                          enabled: false,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            floatingLabelBehavior: FloatingLabelBehavior.always,
+                            label: const Text('Email'),
+                            prefixIcon: Icon(Icons.email),
                           ),
+                        ),
+                        SpacerH(15),
+                        TextFormField(
+                          controller: _nameController,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(50),
+                            ),
+                            label: Text('Fullname'),
+                            prefixIcon: Icon(
+                              Icons.person,
+                            ),
+                          ),
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          validator: (value) {
+                            return value != null && value.length < 6 ||
+                                    value != null && value.length > 20
+                                ? 'Min. 6 - Max. 20 characters'
+                                : null;
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  //button update profile
+                  SpacerH(40),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 50,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          context.read<ProfileBloc>().add(
+                                ProfileUpdateRequested(
+                                  imagePath: '',
+                                  userId:
+                                      context.read<SessionCubit>().state.id!,
+                                  name: _nameController.text,
+                                ),
+                              );
+                        }
+                      },
+                      child: Text('Update Profile'),
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(50),
                         ),
                       ),
                     ),
-                    SpacerH(50),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        // ElevatedButton(
-                        //   onPressed: () {},
-                        //   style: ElevatedButton.styleFrom(
-                        //     backgroundColor: Colors.redAccent.withOpacity(0.1),
-                        //     elevation: 0,
-                        //     foregroundColor: Colors.red,
-                        //     shape: const StadiumBorder(),
-                        //     side: BorderSide.none,
-                        //   ),
-                        //   child: Text('Delete'),
-                        // ),
-                      ],
-                    ),
-                  ],
-                ),
+                  ),
+                  SpacerH(50),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // ElevatedButton(
+                      //   onPressed: () {},
+                      //   style: ElevatedButton.styleFrom(
+                      //     backgroundColor: Colors.redAccent.withOpacity(0.1),
+                      //     elevation: 0,
+                      //     foregroundColor: Colors.red,
+                      //     shape: const StadiumBorder(),
+                      //     side: BorderSide.none,
+                      //   ),
+                      //   child: Text('Delete'),
+                      // ),
+                    ],
+                  ),
+                ],
               ),
-            );
-          
+            ),
+          );
 
           return Container();
         },

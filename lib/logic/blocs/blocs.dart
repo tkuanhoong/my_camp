@@ -4,7 +4,7 @@ import 'package:my_camp/data/repository/auth_repository.dart';
 import 'package:my_camp/data/repository/campsite_repository.dart';
 import 'package:my_camp/data/repository/user_repository.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
-import 'package:my_camp/logic/blocs/bloc/profile_bloc.dart';
+import 'package:my_camp/logic/blocs/profile/profile_bloc.dart';
 import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/blocs/search/search_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
@@ -20,7 +20,8 @@ class BlocWidget extends StatelessWidget {
   final SearchBloc _searchBloc = SearchBloc(repository: CampsiteRepository());
   final CampsiteBloc _campsiteBloc = CampsiteBloc();
   final UserRepository _userRepository = UserRepository();
-  final ProfileBloc _profileCubit = ProfileBloc(userRepository: UserRepository());
+  final ProfileBloc _profileCubit =
+      ProfileBloc(userRepository: UserRepository());
 
   @override
   Widget build(BuildContext context) {

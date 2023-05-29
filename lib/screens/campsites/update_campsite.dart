@@ -10,6 +10,7 @@ import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart' as path;
 import 'package:image_picker/image_picker.dart';
 import 'package:my_camp/constant/states.dart' as StateList;
+import 'package:my_camp/data/models/faq.dart';
 
 class UpdateCampsitePage extends StatefulWidget {
   final String campsiteId;
@@ -32,7 +33,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
   TextEditingController _descriptionController = TextEditingController();
   TextEditingController _addressController = TextEditingController();
   TextEditingController _stateController = TextEditingController();
-  List<FAQEntry> _faqEntries = [];
+  List? _faqEntries = [];
 
   Future<void> _pickImage() async {
     final pickedFile = await picker.getImage(source: ImageSource.gallery);
@@ -44,16 +45,10 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
   }
 
   void _addFAQEntry() {
-    // setState(() {
-    //   for(Map faq in _campsite.faq!){
-    //   _faqEntries.add(FAQEntry(question: faq['question'], answer: faq['answer']));
-    // }
-    // });
-
-    //   print(_campsite.faq!.length!);
     setState(() {
-      _faqEntries.add(FAQEntry());
+      _faqEntries!.add(Faq(question: null, answer: null).toMap());
     });
+    print(_faqEntries);
   }
 
   Future<void> _createCampsite() async {
@@ -79,15 +74,12 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
           .doc(userId)
           .collection('campsites');
 
-      // Create a new document with an auto-generated ID
-      DocumentReference newCampsiteDoc = campsitesCollection.doc();
-
       // Prepare the data to be saved
       String imagePath = '';
 
       if (_image != null) {
         // Upload the image to Firebase Storage
-        final fileName = newCampsiteDoc.id + path.basename(_image!.path);
+        final fileName = _campsite.id + path.basename(_image!.path);
         final destination = 'images/campsites/$fileName';
 
         firebase_storage.Reference ref =
@@ -95,26 +87,30 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         firebase_storage.UploadTask uploadTask = ref.putFile(_image!);
         await uploadTask.whenComplete(() {});
         imagePath = await ref.getDownloadURL();
+      } else {
+        imagePath = _campsite.imagePath;
       }
-
       Map<String, dynamic> campsiteData = {
         'imagePath': imagePath,
         'name': _nameController.text,
         'description': _descriptionController.text,
         'address': _addressController.text,
-        // 'state': _stateController.text,
-        'state': _selectedState,
-        'faq': _faqEntries
-            .map((faq) => {'question': faq.question, 'answer': faq.answer})
+        'state': _campsite.state,
+        'faq': _faqEntries!
+            .map((faq) =>
+                {"question": faq["question"], "answer": faq["question"]})
             .toList(),
-        'id': newCampsiteDoc.id,
+        'id': _campsite.id,
         'verified': true,
         'createdAt': DateTime.now(),
         // 'updated_at': DateTime.now(),
       };
 
+      // Find campsite document
+      DocumentReference campsite = campsitesCollection.doc(_campsite.id);
+
       // Save the data to Firestore
-      await newCampsiteDoc.set(campsiteData);
+      await campsite.set(campsiteData);
 
       // Show a success message to the user
       showDialog(
@@ -123,12 +119,13 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Success'),
-            content: Text('Campsite created successfully!'),
+            content: Text('Campsite updated successfully!'),
             actions: [
               TextButton(
                 child: Text('OK'),
                 onPressed: () {
-                  context.goNamed('manage-campsite');
+                  Navigator.of(context).pop();
+                  context.goNamed('home');
                 },
               ),
             ],
@@ -146,7 +143,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         builder: (BuildContext context) {
           return AlertDialog(
             title: Text('Error'),
-            content: Text('An error occurred while creating the campsite.'),
+            content: Text(error.toString()),
             actions: [
               TextButton(
                 child: Text('OK'),
@@ -196,6 +193,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         }
         if (state is CampsiteLoaded) {
           _campsite = state.campsite;
+          _faqEntries = _campsite.faq;
           _nameController.text = _campsite.name;
           _descriptionController.text = _campsite.description;
           _addressController.text = _campsite.address;
@@ -228,7 +226,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
                               border:
                                   Border.all(color: Colors.indigo, width: 2),
                             ),
-                            child: _image != null
+                            child: (_image != null && _campsite.imagePath != '')
                                 ? ClipRRect(
                                     borderRadius: BorderRadius.circular(8),
                                     child: Image.file(
@@ -236,10 +234,38 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
                                       fit: BoxFit.cover,
                                     ),
                                   )
-                                : Icon(
-                                    Icons.camera_alt,
-                                    size: 50,
-                                    color: Colors.indigo,
+                                : Image.network(
+                                    _campsite.imagePath,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder:
+                                        (context, child, loadingProgress) {
+                                      if (loadingProgress == null) {
+                                        // Future.microtask(() {
+                                        //   setState(() {
+                                        //     _isLoading = false;
+                                        //   });
+                                        // });
+                                        // print('x');
+                                        // _isLoading = false;
+                                        return child;
+                                      } else {
+                                        // Future.microtask(() {
+                                        //   setState(() {
+                                        //     _isLoading = true;
+                                        //   });
+                                        // });
+                                        return Center(
+                                          child: CircularProgressIndicator(),
+                                        );
+                                      }
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Icon(
+                                        Icons.error,
+                                        size: 50,
+                                        color: Colors.indigo,
+                                      );
+                                    },
                                   ),
                           ),
                         ),
@@ -313,7 +339,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
                       ),
                       SizedBox(height: 10),
                       DropdownButtonFormField<String>(
-                        value: _selectedState,
+                        value: _campsite.state,
                         onChanged: (value) {
                           setState(() {
                             _selectedState = value;
@@ -371,7 +397,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
                       SizedBox(height: 10),
                       Column(
                         children: List.generate(
-                          _faqEntries.length,
+                          _faqEntries!.length,
                           (index) => _buildFAQEntry(index),
                         ),
                       ),
@@ -413,15 +439,16 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
   }
 
   Widget _buildFAQEntry(int index) {
+    // return Container();
     TextEditingController questionController = TextEditingController();
     TextEditingController answerController = TextEditingController();
 
     // Check if FAQEntry object already has values
-    if (_faqEntries[index].question!.isNotEmpty) {
-      questionController.text = _faqEntries[index].question!;
+    if (_faqEntries![index]['question'] != null) {
+      questionController.text = _faqEntries![index]['question'];
     }
-    if (_faqEntries[index].answer!.isNotEmpty) {
-      answerController.text = _faqEntries[index].answer!;
+    if (_faqEntries![index]['answer'] != null) {
+      answerController.text = _faqEntries![index]['answer']!;
     }
 
     return Column(
@@ -441,7 +468,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
             }
             return null;
           },
-          onChanged: (value) => _faqEntries[index].question = value,
+          onChanged: (value) => _faqEntries![index].question = value,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Enter the question',
@@ -461,7 +488,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
             }
             return null;
           },
-          onChanged: (value) => _faqEntries[index].answer = value,
+          onChanged: (value) => _faqEntries![index].answer = value,
           decoration: InputDecoration(
             border: OutlineInputBorder(),
             hintText: 'Enter the answer',
@@ -470,11 +497,4 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
       ],
     );
   }
-}
-
-class FAQEntry {
-  String? question = '';
-  String? answer = '';
-
-  FAQEntry({this.question, this.answer});
 }

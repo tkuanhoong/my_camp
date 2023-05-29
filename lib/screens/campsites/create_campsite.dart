@@ -1,12 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
-import '../auth/verify_email_screen.dart';
-// import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 import 'package:path/path.dart' as path;
@@ -25,7 +21,6 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
   String? _selectedState;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  String? _imagePath = '';
   File? _image;
   final picker = ImagePicker();
   TextEditingController _nameController = TextEditingController();
@@ -174,6 +169,7 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
               TextButton(
                 child: Text('OK'),
                 onPressed: () {
+                  context.pop();
                   context.goNamed('manage-campsite');
                 },
               ),
