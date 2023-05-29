@@ -6,6 +6,7 @@ import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/logic/blocs/search/search_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 import 'package:my_camp/widgets/campsite_item.dart';
+import 'package:go_router/go_router.dart';
 
 class ManageCampsite extends StatefulWidget {
   const ManageCampsite({Key? key}) : super(key: key);
@@ -40,7 +41,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
 
   @override
   void dispose() {
-     _scrollController.removeListener(() {
+    _scrollController.removeListener(() {
       _onScroll(context);
     });
     _scrollController.dispose();
@@ -103,6 +104,12 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                       ),
                     ),
                   ),
+                  IconButton(
+                    icon: const Icon(Icons.add),
+                    onPressed: () {
+                      context.goNamed('campsites-create');
+                    },
+                  ),
                 ],
               ),
             ),
@@ -114,50 +121,50 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                 }
                 if (state is SearchResultLoaded) {
                   const firstLoadItemLength = 10;
-                        if ((state.searchResults.isNotEmpty &&
-                                _campsitesList.isEmpty) ||
-                            (state.searchAction &&
-                                _campsitesList.isEmpty &&
-                                state.searchResults.isNotEmpty)) {
-                          _campsitesList = state.searchResults;
-                        } else {
-                          _campsitesList = [
-                            ..._campsitesList,
-                            ...state.searchResults
-                          ];
-                        }
+                  if ((state.searchResults.isNotEmpty &&
+                          _campsitesList.isEmpty) ||
+                      (state.searchAction &&
+                          _campsitesList.isEmpty &&
+                          state.searchResults.isNotEmpty)) {
+                    _campsitesList = state.searchResults;
+                  } else {
+                    _campsitesList = [
+                      ..._campsitesList,
+                      ...state.searchResults
+                    ];
+                  }
 
-                        if (_campsitesList.isEmpty) {
-                          return Center(
-                            child: Text('No results found'),
-                          );
-                        }
-                        return ListView.builder(
-                          controller: _scrollController,
-                          itemCount: (state.hasReachedMax ||
-                                  _campsitesList.length < firstLoadItemLength)
-                              ? _campsitesList.length
-                              : _campsitesList.length + 1,
-                          itemBuilder: (context, index) {
-                            return index >= _campsitesList.length
-                                ? const Center(
-                                    child: Padding(
-                                      padding: EdgeInsets.all(4.0),
-                                      child: SizedBox(
-                                        height: 30,
-                                        width: 30,
-                                        child: CircularProgressIndicator(),
-                                      ),
-                                    ),
-                                  )
-                                : CampsiteItem(
-                                  id: _campsitesList[index].id,
-                                  description: _campsitesList[index].state,
-                                  starRating: 5,
-                                  title: _campsitesList[index].name,
-                                );
-                          },
-                        );
+                  if (_campsitesList.isEmpty) {
+                    return Center(
+                      child: Text('No results found'),
+                    );
+                  }
+                  return ListView.builder(
+                    controller: _scrollController,
+                    itemCount: (state.hasReachedMax ||
+                            _campsitesList.length < firstLoadItemLength)
+                        ? _campsitesList.length
+                        : _campsitesList.length + 1,
+                    itemBuilder: (context, index) {
+                      return index >= _campsitesList.length
+                          ? const Center(
+                              child: Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: SizedBox(
+                                  height: 30,
+                                  width: 30,
+                                  child: CircularProgressIndicator(),
+                                ),
+                              ),
+                            )
+                          : CampsiteItem(
+                              id: _campsitesList[index].id,
+                              description: _campsitesList[index].state,
+                              starRating: 5,
+                              title: _campsitesList[index].name,
+                            );
+                    },
+                  );
                 }
                 return Center(
                   child: Text('Something went wrong'),

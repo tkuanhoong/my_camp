@@ -8,11 +8,13 @@ import 'package:my_camp/screens/auth/login_screen.dart';
 import 'package:my_camp/screens/auth/register_screen.dart';
 import 'package:my_camp/screens/auth/verify_email_screen.dart';
 import 'package:my_camp/screens/campsite_details.dart';
+import 'package:my_camp/screens/campsites/update_campsite.dart';
 import 'package:my_camp/screens/home.dart';
 import 'package:my_camp/screens/manage_campsite.dart';
 import 'package:my_camp/screens/search/search_campsite_page.dart';
 import 'package:my_camp/screens/welcome.dart';
 import 'package:my_camp/screens/profile_page.dart';
+import 'package:my_camp/screens/campsites/create_campsite.dart';
 
 // final PhoneAuthBloc _phoneAuthBloc =
 //     PhoneAuthBloc(phoneAuthRepository: _phoneAuthRepository);
@@ -101,10 +103,28 @@ final GoRouter router = GoRouter(
                       GoRoute(
                         path: 'campsite/:campsiteId',
                         name: 'campsite-details',
-                        builder: (BuildContext context, GoRouterState state){
-                          return CampsiteDetails(campsiteId: state.params['campsiteId']!);
+                        builder: (BuildContext context, GoRouterState state) {
+                          return CampsiteDetails(
+                              campsiteId: state.params['campsiteId']!);
                         },
-                      )
+                        routes: [
+                          GoRoute(
+                            path: "edit",
+                            name: 'campsite-edit',
+                            builder: (context, state) {
+                              return UpdateCampsitePage(
+                                  campsiteId: state.params['campsiteId']!);
+                            },
+                          )
+                        ],
+                      ),
+                      GoRoute(
+                        name: 'campsites-create',
+                        path: 'create',
+                        builder: (BuildContext context, GoRouterState state) {
+                          return const CreateCampsitePage();
+                        },
+                      ),
                     ]),
                 GoRoute(
                   name: 'search',

@@ -27,6 +27,12 @@
 	<key>NSMainNibFile</key>
 	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
+
+	<key>NSCameraUsageDescription</key>
+	<true/>
+	<key>NSPhotoLibraryUsageDescription </key>
+	<true/>
+
 	<string>NSApplication</string>
 </dict>
 </plist>

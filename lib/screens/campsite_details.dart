@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:go_router/go_router.dart';
 import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
@@ -18,9 +19,9 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
   late Campsite _campsite;
   @override
   initState() {
-    context
-        .read<CampsiteBloc>()
-        .add(SingleCampsiteRequested(campsiteId: widget.campsiteId));
+    context.read<CampsiteBloc>().add(SingleCampsiteRequested(
+        campsiteId: widget.campsiteId,
+        userId: context.read<SessionCubit>().state.id));
     super.initState();
   }
 
@@ -46,18 +47,32 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
-        leading: const BackButton(),
-        title: BlocBuilder<CampsiteBloc, CampsiteState>(
-          builder: (context, state) {
-            if(state is CampsiteLoaded){
-              return Text(state.campsite.name);
-            } else{
-              return const Text('Loading...');
-            }
-          },
-        ),
-      ),
+          backgroundColor: Theme.of(context).primaryColor,
+          leading: const BackButton(),
+          title: BlocBuilder<CampsiteBloc, CampsiteState>(
+            builder: (context, state) {
+              if (state is CampsiteLoaded) {
+                return Text(state.campsite.name);
+              } else {
+                return const Text('Loading...');
+              }
+            },
+          ),
+          actions: [
+            BlocBuilder<CampsiteBloc, CampsiteState>(
+              builder: (context, state) {
+                if (state is CampsiteLoaded && state.isCampsiteOwner) {
+                  return IconButton(
+                      onPressed: () {
+                        context.goNamed('campsite-edit',
+                            params: {"campsiteId": state.campsite.id});
+                      },
+                      icon: const Icon(Icons.edit));
+                }
+                return Container();
+              },
+            ),
+          ]),
       body: BlocConsumer<CampsiteBloc, CampsiteState>(
         listener: (context, state) {
           if (state is CampsiteError) {

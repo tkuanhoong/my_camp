@@ -1,5 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.my_camp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Add camera and gallery-related permissions -->
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    
    <application
         android:label="my_camp"
         android:name="${applicationName}"

@@ -4,26 +4,40 @@ import 'package:my_camp/data/models/campsite.dart';
 class CampsiteService {
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  Future<List<Campsite>> fetchCampsiteData({required campsitesList, required int limit, String? keyword, List? selectedStates, String? userId}) async {
+  Future<List<Campsite>> fetchCampsiteData(
+      {required campsitesList,
+      required int limit,
+      String? keyword,
+      List? selectedStates,
+      String? userId}) async {
     Query campsites;
-    if(userId != null && userId.isNotEmpty){
-      campsites = _db.collection('users').doc(userId).collection('campsites').where('verified', isEqualTo: true);
-    } else{
-      campsites = _db.collectionGroup('campsites').where('verified', isEqualTo: true);
+    if (userId != null && userId.isNotEmpty) {
+      campsites = _db
+          .collection('users')
+          .doc(userId)
+          .collection('campsites')
+          .where('verified', isEqualTo: true);
+    } else {
+      campsites =
+          _db.collectionGroup('campsites').where('verified', isEqualTo: true);
     }
-    
-    if(keyword != null && keyword.isNotEmpty){
-      campsites = campsites.where('name', isGreaterThanOrEqualTo: keyword).where('name', isLessThan: '$keyword\uf8ff');
+
+    if (keyword != null && keyword.isNotEmpty) {
+      campsites = campsites
+          .where('name', isGreaterThanOrEqualTo: keyword)
+          .where('name', isLessThan: '$keyword\uf8ff');
     }
-    if(selectedStates != null && selectedStates.isNotEmpty){
+    if (selectedStates != null && selectedStates.isNotEmpty) {
       campsites = campsites.where('state', whereIn: selectedStates);
     }
 
-    if(campsitesList.isNotEmpty){
-    QuerySnapshot startAfter = await campsites.where('id', isEqualTo: campsitesList.last.id).get();
-    QueryDocumentSnapshot  startAfterDoc = startAfter.docs[startAfter.docs.length - 1];
+    if (campsitesList.isNotEmpty) {
+      QuerySnapshot startAfter =
+          await campsites.where('id', isEqualTo: campsitesList.last.id).get();
+      QueryDocumentSnapshot startAfterDoc =
+          startAfter.docs[startAfter.docs.length - 1];
       campsites = campsites.startAfterDocument(startAfterDoc).limit(limit);
-    } else{
+    } else {
       campsites = campsites.limit(limit);
     }
     QuerySnapshot querySnapshot = await campsites.get();
@@ -32,13 +46,28 @@ class CampsiteService {
         .toList();
   }
 
-  Future<Campsite?> fetchSingleCampsiteData(id) async{
-    QuerySnapshot document = await _db.collectionGroup('campsites').where('id', isEqualTo: id).get();
-    if(document.docs.isNotEmpty){
-      return Campsite.fromMap(document.docs.first.data() as Map<String, dynamic>);
+  Future<Campsite?> fetchSingleCampsiteData(id) async {
+    QuerySnapshot documents =
+        await _db.collectionGroup('campsites').where('id', isEqualTo: id).get();
+    if (documents.docs.isNotEmpty) {
+      return Campsite.fromMap(
+          documents.docs.first.data() as Map<String, dynamic>);
     } else {
       return null;
     }
+  }
+
+  Future<bool> verifyCampsiteOwner(userId, campsiteId) async {
+    DocumentSnapshot documents = await _db
+        .collection('users')
+        .doc(userId)
+        .collection('campsites')
+        .doc(campsiteId)
+        .get();
+    if (documents.exists) {
+      return true;
+    }
+    return false;
   }
 
   Future updateCampsiteData(Campsite campsite, String userId) async {

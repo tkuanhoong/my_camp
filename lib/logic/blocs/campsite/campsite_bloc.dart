@@ -12,10 +12,13 @@ class CampsiteBloc extends Bloc<CampsiteEvent, CampsiteState> {
     on<SingleCampsiteRequested>((event, emit) async {
       emit(CampsiteLoading());
       try {
-        Campsite? campsite =
-            await campsiteRepository.fetchSingleCampsiteData(event.campsiteId);
+        Campsite? campsite = await campsiteRepository.fetchSingleCampsiteData(
+            event.campsiteId, event.userId);
         if (campsite != null) {
-          emit(CampsiteLoaded(campsite: campsite));
+          bool isCampsiteOwner = await campsiteRepository.verifyCampsiteOwner(
+              event.userId, event.campsiteId);
+          emit(CampsiteLoaded(
+              campsite: campsite, isCampsiteOwner: isCampsiteOwner));
         }
       } catch (e) {
         emit(CampsiteError(error: e.toString()));

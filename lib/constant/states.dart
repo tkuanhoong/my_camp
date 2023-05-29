@@ -1,0 +1,15 @@
+final List<String> states = [
+  'JOHOR',
+  'KEDAH',
+  'KELANTAN',
+  'KUALA LUMPUR',
+  'MELAKA',
+  'NEGERI SEMBILAN',
+  'PAHANG',
+  'PULAU PINANG',
+  'PERAK',
+  'PERLIS',
+  'SARAWAK',
+  'SELANGOR',
+  'TERENGGANU',
+];
