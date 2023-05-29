@@ -85,6 +85,32 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
       _isLoading = true;
     });
 
+    if (_image == null) {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('Error'),
+            content: Text('Please upload a campsite image.'),
+            actions: [
+              TextButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
+      );
+
+      setState(() {
+        _isLoading = false;
+      });
+      return;
+    }
+
     // After the operation is completed:
 
     // Store the campsite information in Firestore
