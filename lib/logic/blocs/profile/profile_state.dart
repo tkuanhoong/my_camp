@@ -44,10 +44,10 @@ class PictureChangedFailure extends ProfileState {
 }
 
 class ProfileFetchedSuccess extends ProfileState {
-  final File image;
-  const ProfileFetchedSuccess({required this.image});
+  final UserModel user;
+  const ProfileFetchedSuccess({required this.user});
   @override
-  List<Object> get props => [image];
+  List<Object> get props => [user];
 }
 
 class ProfileFetching extends ProfileState {}

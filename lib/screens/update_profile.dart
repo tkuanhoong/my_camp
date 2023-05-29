@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,10 +16,10 @@ class UpdateProfile extends StatefulWidget {
 
 class _UpdateProfileState extends State<UpdateProfile> {
   final TextEditingController _nameController = TextEditingController();
-
   final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   UserModel? user;
+  File? _image;
   @override
   void initState() {
     context.read<ProfileBloc>().add(
@@ -55,16 +57,12 @@ class _UpdateProfileState extends State<UpdateProfile> {
           }
         },
         builder: (context, state) {
-          if (state is ProfileUpdateLoading) {
+          if (state is ProfileUpdateLoading || state is ProfileFetching) {
             return const Center(
               child: CircularProgressIndicator(),
             );
           }
-          if (state is PictureChanged) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
-          }
+
           return SingleChildScrollView(
             child: Container(
               padding: const EdgeInsets.all(8.0),
@@ -81,6 +79,7 @@ class _UpdateProfileState extends State<UpdateProfile> {
                       return Text('ERROR');
                     }
                     if (state is PictureChanged) {
+                      _image = state.image;
                       return Stack(
                         children: [
                           SizedBox(
@@ -88,7 +87,48 @@ class _UpdateProfileState extends State<UpdateProfile> {
                             width: 200,
                             child: ClipRRect(
                               borderRadius: BorderRadius.circular(100),
-                              child: Image.file(state.image),
+                              child: Image.file(_image!),
+                            ),
+                          ),
+                          Positioned(
+                            bottom: 20,
+                            right: 20,
+                            child: GestureDetector(
+                              onTap: () {
+                                context
+                                    .read<ProfileBloc>()
+                                    .add(AddPictureButtonClicked());
+                              },
+                              child: Container(
+                                height: 50,
+                                width: 50,
+                                decoration: BoxDecoration(
+                                  color: Colors.indigo,
+                                  borderRadius: BorderRadius.circular(100),
+                                ),
+                                child: const Icon(
+                                  Icons.camera_alt,
+                                  color: Colors.white,
+                                  size: 20,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                    if (state is ProfileFetchedSuccess) {
+                      return Stack(
+                        children: [
+                          SizedBox(
+                            height: 200,
+                            width: 200,
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(100),
+                              child: state.user!.imagePath != null &&
+                                      state.user!.imagePath!.isNotEmpty
+                                  ? Image.network(state.user.imagePath!)
+                                  : Image.asset('assets/images/logo.png'),
                             ),
                           ),
                           Positioned(
@@ -172,9 +212,8 @@ class _UpdateProfileState extends State<UpdateProfile> {
                         if (_formKey.currentState!.validate()) {
                           context.read<ProfileBloc>().add(
                                 ProfileUpdateRequested(
-                                  imagePath: '',
-                                  userId:
-                                      context.read<SessionCubit>().state.id!,
+                                  image: _image,
+                                  userId: context.read<SessionCubit>().state.id!,
                                   name: _nameController.text,
                                 ),
                               );
@@ -209,8 +248,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
               ),
             ),
           );
-
-          return Container();
         },
       ),
     );

@@ -102,31 +102,27 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Builder emailTxt() {
-    return Builder(
-      builder: (context) {
-        final state = context.watch<SessionCubit>().state;
-        return Text(
-          state.email ?? 'User Email',
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-          maxLines: 2,
-        );
-      }
-    );
+    return Builder(builder: (context) {
+      final state = context.watch<SessionCubit>().state;
+      return Text(
+        state.email ?? 'User Email',
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+        maxLines: 2,
+      );
+    });
   }
 
   Builder UsernameTxt() {
-    return Builder(
-      builder: (context) {
-        final state = context.watch<SessionCubit>().state;
-        return Text(
-          state.userName ?? 'User Name',
-          textAlign: TextAlign.center,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-          overflow: TextOverflow.ellipsis,
-          maxLines: 2,
-        );
-      }
-    );
+    return Builder(builder: (context) {
+      final state = context.watch<SessionCubit>().state;
+      return Text(
+        state.userName ?? 'User Name',
+        textAlign: TextAlign.center,
+        style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+      );
+    });
   }
 
   SizedBox _buildUserInfo() {
@@ -138,18 +134,26 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  SizedBox ProfilePhoto_Widget() {
-    return SizedBox(
-      width: 150,
-      height: 150,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(150),
-        child: const Image(
-          fit: BoxFit.cover,
-          image: AssetImage('assets/images/logo.png'),
+  Builder ProfilePhoto_Widget() {
+    return Builder(builder: (context) {
+      final imagePath = context.watch<SessionCubit>().state.imagePath;
+      return SizedBox(
+        width: 150,
+        height: 150,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(150),
+          child: imagePath != null
+              ? Image.network(
+                  imagePath,
+                  fit: BoxFit.cover,
+                )
+              : const Image(
+                  fit: BoxFit.cover,
+                  image: AssetImage('assets/images/logo.png'),
+                ),
         ),
-      ),
-    );
+      );
+    });
   }
 
   SizedBox SpacerH10() {

@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:my_camp/data/models/user_model.dart';
 import 'package:my_camp/data/repository/user_repository.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:path/path.dart' as path;
 import 'dart:io';
 
 part 'profile_event.dart';
@@ -15,7 +16,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       emit(ProfileFetching());
       try {
         UserModel user = await userRepository.fetchUser(event.userId);
-        // emit(ProfileFetchedSuccess(user.imagePath));
+        emit(ProfileFetchedSuccess(user: user));
       } catch (e) {
         emit(ProfileFetchError(error: e.toString()));
       }
@@ -23,7 +24,7 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<ProfileUpdateRequested>((event, emit) async {
       emit(ProfileUpdateLoading());
       try {
-        await userRepository.updateUser(event.userId, event.name);
+        await userRepository.updateUser(event.userId, event.name, event.image);
         emit(ProfileUpdatedSuccess(
             user: await userRepository.fetchUser(event.userId)));
       } catch (e) {

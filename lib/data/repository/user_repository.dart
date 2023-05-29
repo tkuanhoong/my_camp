@@ -10,8 +10,8 @@ class UserRepository {
     return _userService.fetchUser(userId: userId);
   }
 
-  Future<void> updateUser(String userId, String name) {
-    return _userService.updateUser(userId, name);
+  Future<void> updateUser(String userId, String name, File? image) {
+    return _userService.updateUser(userId, name, image);
   }
 
   Future<File?> changeImage() async {

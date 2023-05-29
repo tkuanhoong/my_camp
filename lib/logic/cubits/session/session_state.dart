@@ -6,12 +6,14 @@ class SessionState extends Equatable {
   final String? id;
   final String? userName;
   final String? email;
+  final String? imagePath;
   const SessionState({
     this.isAuthenticated,
     this.isFirstLaunched,
     this.id,
     this.userName,
     this.email,
+    this.imagePath,
   });
 
   // Edit Session
@@ -21,6 +23,7 @@ class SessionState extends Equatable {
     String? id,
     String? userName,
     String? email,
+    String? imagePath,
   }) {
     return SessionState(
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
@@ -28,6 +31,7 @@ class SessionState extends Equatable {
       id: id ?? this.id,
       userName: userName ?? this.userName,
       email: email ?? this.email,
+      imagePath: imagePath ?? this.imagePath,
     );
   }
 
@@ -39,21 +43,19 @@ class SessionState extends Equatable {
       'id': id,
       'userName': userName,
       'email': email,
+      'imagePath': imagePath,
     };
   }
 
   // generate Map structure
   factory SessionState.fromMap(Map<String, dynamic> map) {
     return SessionState(
-      isAuthenticated: map['isAuthenticated'] != null
-          ? map['isAuthenticated'] as bool
-          : null,
-      isFirstLaunched: map['isFirstLaunched'] != null
-          ? map['isFirstLaunched'] as bool
-          : null,
+      isAuthenticated: map['isAuthenticated'] != null ? map['isAuthenticated'] as bool : null,
+      isFirstLaunched: map['isFirstLaunched'] != null ? map['isFirstLaunched'] as bool : null,
       id: map['id'] != null ? map['id'] as String : null,
       userName: map['userName'] != null ? map['userName'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
+      imagePath: map['imagePath'] != null ? map['imagePath'] as String : null,
     );
   }
 
@@ -68,6 +70,14 @@ class SessionState extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props =>
-      [isAuthenticated, isFirstLaunched, id, userName, email];
+  List<Object?> get props {
+    return [
+      isAuthenticated,
+      isFirstLaunched,
+      id,
+      userName,
+      email,
+      imagePath,
+    ];
+  }
 }

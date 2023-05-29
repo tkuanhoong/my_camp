@@ -25,7 +25,7 @@ class SessionCubit extends HydratedCubit<SessionState> {
 
   void clearUserSession()  =>  emit(const SessionState(isAuthenticated: false,isFirstLaunched: true));
 
-  void updateUserSession(UserModel user) => emit(state.copyWith(userName: user.name));
+  void updateUserSession(UserModel user) => emit(state.copyWith(userName: user.name, imagePath: user.imagePath));
 
   // Called everytime the app needs store data
   @override
