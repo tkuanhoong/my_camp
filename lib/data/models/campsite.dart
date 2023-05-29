@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:equatable/equatable.dart';
@@ -9,21 +10,21 @@ class Campsite extends Equatable {
   final String address;
   final String state;
   final String imagePath;
-  // final List<Map?>? faq;
+  final List? faq;
   final bool verified;
 
   // Constructor
-  Campsite({
+  const Campsite({
     required this.id,
     required this.name,
     required this.description,
     required this.address,
     required this.state,
     required this.imagePath,
+    this.faq,
     required this.verified,
   });
 
-  // Edit Campsite
   Campsite copyWith({
     String? id,
     String? name,
@@ -31,6 +32,7 @@ class Campsite extends Equatable {
     String? address,
     String? state,
     String? imagePath,
+    List? faq,
     bool? verified,
   }) {
     return Campsite(
@@ -40,11 +42,11 @@ class Campsite extends Equatable {
       address: address ?? this.address,
       state: state ?? this.state,
       imagePath: imagePath ?? this.imagePath,
+      faq: faq ?? this.faq,
       verified: verified ?? this.verified,
     );
   }
 
-  // Convert Campsite attributes to Map
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       'id': id,
@@ -53,11 +55,11 @@ class Campsite extends Equatable {
       'address': address,
       'state': state,
       'imagePath': imagePath,
+      'faq': faq,
       'verified': verified,
     };
   }
 
-  // Generate Map structure
   factory Campsite.fromMap(Map<String, dynamic> map) {
     return Campsite(
       id: map['id'] as String,
@@ -66,23 +68,20 @@ class Campsite extends Equatable {
       address: map['address'] as String,
       state: map['state'] as String,
       imagePath: map['imagePath'] as String,
+      faq: map['faq'] != null ? List.from((map['faq'] as List).map((x) => x),) : null,
       verified: map['verified'] as bool,
     );
   }
 
-  // Convert to JSON format
   String toJson() => json.encode(toMap());
 
-  // Decode JSON file into Map using fromMap method
-  factory Campsite.fromJson(String source) =>
-      Campsite.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Campsite.fromJson(String source) => Campsite.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;
 
   @override
-  // TODO: implement props
-  List<Object> get props {
+  List<Object?> get props {
     return [
       id,
       name,
@@ -90,6 +89,7 @@ class Campsite extends Equatable {
       address,
       state,
       imagePath,
+      faq,
       verified,
     ];
   }

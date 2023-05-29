@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:equatable/equatable.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:my_camp/data/models/user_model.dart';
 
 part 'session_state.dart';
 
@@ -23,6 +24,8 @@ class SessionCubit extends HydratedCubit<SessionState> {
   }
 
   void clearUserSession()  =>  emit(const SessionState(isAuthenticated: false,isFirstLaunched: true));
+
+  void updateUserSession(UserModel user) => emit(state.copyWith(userName: user.name));
 
   // Called everytime the app needs store data
   @override

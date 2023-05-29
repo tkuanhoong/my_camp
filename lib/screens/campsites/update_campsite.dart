@@ -44,6 +44,13 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
   }
 
   void _addFAQEntry() {
+    // setState(() {
+    //   for(Map faq in _campsite.faq!){
+    //   _faqEntries.add(FAQEntry(question: faq['question'], answer: faq['answer']));
+    // }
+    // });
+
+    //   print(_campsite.faq!.length!);
     setState(() {
       _faqEntries.add(FAQEntry());
     });
@@ -410,11 +417,11 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
     TextEditingController answerController = TextEditingController();
 
     // Check if FAQEntry object already has values
-    if (_faqEntries[index].question.isNotEmpty) {
-      questionController.text = _faqEntries[index].question;
+    if (_faqEntries[index].question!.isNotEmpty) {
+      questionController.text = _faqEntries[index].question!;
     }
-    if (_faqEntries[index].answer.isNotEmpty) {
-      answerController.text = _faqEntries[index].answer;
+    if (_faqEntries[index].answer!.isNotEmpty) {
+      answerController.text = _faqEntries[index].answer!;
     }
 
     return Column(
@@ -466,6 +473,8 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
 }
 
 class FAQEntry {
-  String question = '';
-  String answer = '';
+  String? question = '';
+  String? answer = '';
+
+  FAQEntry({this.question, this.answer});
 }

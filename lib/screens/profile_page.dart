@@ -101,21 +101,31 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Text emailTxt() {
-    return Text(
-      context.read<SessionCubit>().state.email ?? 'User Email',
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-      maxLines: 2,
+  Builder emailTxt() {
+    return Builder(
+      builder: (context) {
+        final state = context.watch<SessionCubit>().state;
+        return Text(
+          state.email ?? 'User Email',
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          maxLines: 2,
+        );
+      }
     );
   }
 
-  Text UsernameTxt() {
-    return Text(
-      context.read<SessionCubit>().state.userName ?? 'User Name',
-      textAlign: TextAlign.center,
-      style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-      overflow: TextOverflow.ellipsis,
-      maxLines: 2,
+  Builder UsernameTxt() {
+    return Builder(
+      builder: (context) {
+        final state = context.watch<SessionCubit>().state;
+        return Text(
+          state.userName ?? 'User Name',
+          textAlign: TextAlign.center,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+          overflow: TextOverflow.ellipsis,
+          maxLines: 2,
+        );
+      }
     );
   }
 

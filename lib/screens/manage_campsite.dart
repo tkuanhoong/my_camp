@@ -107,7 +107,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                   IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {
-                      context.goNamed('campsites-create');
+                      context.replaceNamed('campsites-create');
                     },
                   ),
                 ],
