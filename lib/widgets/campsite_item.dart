@@ -5,8 +5,9 @@ class CampsiteItem extends StatelessWidget {
   final String id;
   final String title;
   final String description;
+  final String imagePath;
   final double starRating;
-  const CampsiteItem({super.key, required this.id, required this.title, required this.description, required this.starRating});
+  const CampsiteItem({super.key, required this.id, required this.title, required this.description, required this.starRating, required this.imagePath});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +31,8 @@ class CampsiteItem extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8.0), // Add desired padding around the image
               width: 150.0, // Adjust the width of the image container
-              child: Image.asset(
-                'assets/images/camp.jpg',
+              child: Image.network(
+                imagePath,
                 fit: BoxFit.cover,
               ),
             ),

@@ -37,7 +37,7 @@ class _HomeState extends State<Home> {
                     print('Tapped on $label');
             break;
           case "My Bookings":
-            // context.goNamed('booking');
+            context.goNamed('bookings');
             break;
           default:
         }

@@ -159,6 +159,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                             )
                           : CampsiteItem(
                               id: _campsitesList[index].id,
+                              imagePath: _campsitesList[index].imagePath,
                               description: _campsitesList[index].state,
                               starRating: 5,
                               title: _campsitesList[index].name,
