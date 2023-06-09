@@ -2,8 +2,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:my_camp/data/models/user_model.dart';
 import 'package:my_camp/data/repository/user_repository.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:path/path.dart' as path;
 import 'dart:io';
 
 part 'profile_event.dart';

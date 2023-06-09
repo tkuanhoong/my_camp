@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:my_camp/data/repository/campsite_repository.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 import 'package:my_camp/screens/auth/forgot_screen.dart';
 import 'package:my_camp/screens/auth/login_screen.dart';
 import 'package:my_camp/screens/auth/register_screen.dart';
-import 'package:my_camp/screens/auth/verify_email_screen.dart';
 import 'package:my_camp/screens/campsite_details.dart';
 import 'package:my_camp/screens/campsites/update_campsite.dart';
 import 'package:my_camp/screens/home.dart';

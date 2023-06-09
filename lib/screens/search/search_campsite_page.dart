@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/logic/blocs/search/search_bloc.dart';
 import 'package:my_camp/widgets/campsite_item.dart';

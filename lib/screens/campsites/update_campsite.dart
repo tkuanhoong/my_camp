@@ -27,7 +27,6 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
   String? _selectedState;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  String? _imagePath = '';
   File? _image;
   final picker = ImagePicker();
   TextEditingController _nameController = TextEditingController();

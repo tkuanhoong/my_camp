@@ -1,7 +1,5 @@
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
 
 class VerifyEmailScreen extends StatefulWidget {
   final String email;

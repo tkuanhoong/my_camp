@@ -26,11 +26,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
   void initState() {
     _userId = context.read<SessionCubit>().state.id;
     if (!_dataFetched) {
-      context.read<SearchBloc>().add(CampsitesRequested(
-          campsitesList: _campsitesList,
-          keyword: _searchController.text,
-          userId: _userId,
-          firstLoad: true));
+      _fetchCampsites();
       _dataFetched = true;
     }
     _scrollController.addListener(() {
@@ -117,7 +113,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
               child: BlocBuilder<SearchBloc, SearchState>(
                   builder: (context, state) {
                 if (state is SearchLoading) {
-                  return Center(child: CircularProgressIndicator());
+                  return const Center(child: CircularProgressIndicator());
                 }
                 if (state is SearchResultLoaded) {
                   const firstLoadItemLength = 10;
@@ -135,7 +131,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                   }
 
                   if (_campsitesList.isEmpty) {
-                    return Center(
+                    return const Center(
                       child: Text('No results found'),
                     );
                   }
@@ -167,7 +163,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                     },
                   );
                 }
-                return Center(
+                return const Center(
                   child: Text('Something went wrong'),
                 );
               }),

@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/data/services/campsite_service.dart';
 
