@@ -52,6 +52,7 @@ dependencies:
   bloc_concurrency: ^0.2.2
   image_picker: ^0.8.4+4
   firebase_storage: ^11.0.0
+  flutter_masked_text2: ^0.9.1
 
 dev_dependencies:
   flutter_test:

@@ -6,6 +6,7 @@ import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 import 'review_page.dart';
+import 'package:my_camp/data/models/faq.dart';
 
 class CampsiteDetails extends StatefulWidget {
   final String campsiteId;
@@ -25,23 +26,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
     super.initState();
   }
 
-  final List<ExpansionPanelItem> _expansionPanelItems = [
-    ExpansionPanelItem(
-      question: 'Are there any walk-in sites?',
-      answer: 'Yes, there are walk-in sites provided',
-      isExpanded: false,
-    ),
-    ExpansionPanelItem(
-      question: 'Question 2',
-      answer: 'Answer 2',
-      isExpanded: false,
-    ),
-    ExpansionPanelItem(
-      question: 'Question 3',
-      answer: 'Answer 3',
-      isExpanded: false,
-    ),
-  ];
+  List<ExpansionPanelItem> _expansionPanelItems = [];
 
   @override
   Widget build(BuildContext context) {
@@ -88,6 +73,20 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CampsiteLoaded) {
             _campsite = state.campsite;
+
+            _expansionPanelItems = [
+              ...state.campsite.faq!
+                  .asMap()
+                  .entries
+                  .map((entry) => ExpansionPanelItem(
+                        faq: Faq.fromMap(entry.value),
+                        isExpanded: _expansionPanelItems.isNotEmpty
+                            ? _expansionPanelItems[entry.key].isExpanded
+                            : false,
+                      ))
+                  .toList()
+            ];
+
             return Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -101,8 +100,10 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8.0),
                         shape: BoxShape.rectangle,
-                        image: const DecorationImage(
-                          image: AssetImage('assets/images/campdetails.jpg'),
+                        image: DecorationImage(
+                          image: NetworkImage(
+                            state.campsite.imagePath,
+                          ),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -193,7 +194,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                               headerBuilder: (context, isExpanded) {
                                 return ListTile(
                                   title: Text(
-                                    item.question,
+                                    item.faq.question!,
                                     style: const TextStyle(
                                         fontWeight: FontWeight.bold),
                                   ),
@@ -205,7 +206,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                 child: Align(
                                   alignment: Alignment.centerLeft,
                                   child: Text(
-                                    item.answer,
+                                    item.faq.answer!,
                                     textAlign: TextAlign.start,
                                   ),
                                 ),
@@ -261,38 +262,57 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                           ],
                         ),
                         const SizedBox(height: 40.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment
-                              .spaceBetween, // Align buttons at the opposite ends
-                          children: [
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // Add your button click logic here
-                                },
-                                icon: const Icon(Icons.star),
-                                label: const Text("Set As Favourite"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context)
-                                      .primaryColor, // Set the background color of the button
+                        BlocBuilder<CampsiteBloc, CampsiteState>(
+                          builder: (context, state) {
+                            if (state is CampsiteLoaded &&
+                                state.isCampsiteOwner) {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 40.0,
+                                child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      context.goNamed('campsite-manage-product', params: {
+                                        "campsiteId": state.campsite.id
+                                      });
+                                    },
+                                    label: const Text("Manage Product"),
+                                    icon: const Icon(Icons.inventory_2_outlined)),
+                              );
+                            }
+                            return Row(
+                              mainAxisAlignment: MainAxisAlignment
+                                  .spaceBetween, // Align buttons at the opposite ends
+                              children: [
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      // Add your button click logic here
+                                    },
+                                    icon: const Icon(Icons.star),
+                                    label: const Text("Set As Favourite"),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context)
+                                          .primaryColor, // Set the background color of the button
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Expanded(
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  // Add your button click logic here
-                                },
-                                icon: const Icon(Icons.add),
-                                label: const Text("Book"),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Theme.of(context)
-                                      .primaryColor, // Set the background color of the button
+                                const SizedBox(width: 10.0),
+                                Expanded(
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      // Add your button click logic here
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text("Book"),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Theme.of(context)
+                                          .primaryColor, // Set the background color of the button
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                          ],
+                              ],
+                            );
+                          },
                         ),
                       ],
                     ),
@@ -312,13 +332,11 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
 }
 
 class ExpansionPanelItem {
-  final String question;
-  final String answer;
+  final Faq faq;
   bool isExpanded;
 
   ExpansionPanelItem({
-    required this.question,
-    required this.answer,
+    required this.faq,
     this.isExpanded = false,
   });
 }

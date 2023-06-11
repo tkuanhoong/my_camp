@@ -35,6 +35,14 @@ class _ManageCampsiteState extends State<ManageCampsite> {
     super.initState();
   }
 
+  void _fetchCampsites() {
+    context.read<SearchBloc>().add(CampsitesRequested(
+        campsitesList: _campsitesList,
+        keyword: _searchController.text,
+        firstLoad: true,
+        userId: _userId));
+  }
+
   @override
   void dispose() {
     _scrollController.removeListener(() {
@@ -103,7 +111,8 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                   IconButton(
                     icon: const Icon(Icons.add),
                     onPressed: () {
-                      context.replaceNamed('campsites-create');
+                      context.goNamed('campsites-create');
+                      // context.pushReplacementNamed('campsites-create');
                     },
                   ),
                 ],
@@ -124,10 +133,14 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                           state.searchResults.isNotEmpty)) {
                     _campsitesList = state.searchResults;
                   } else {
-                    _campsitesList = [
-                      ..._campsitesList,
-                      ...state.searchResults
-                    ];
+                    if (_campsitesList.isNotEmpty &&
+                        state.searchResults.isNotEmpty &&
+                        _campsitesList.last.id != state.searchResults.last.id) {
+                      _campsitesList = [
+                        ..._campsitesList,
+                        ...state.searchResults
+                      ];
+                    }
                   }
 
                   if (_campsitesList.isEmpty) {
@@ -172,13 +185,5 @@ class _ManageCampsiteState extends State<ManageCampsite> {
         ),
       ),
     );
-  }
-
-  void _fetchCampsites() {
-    context.read<SearchBloc>().add(CampsitesRequested(
-        campsitesList: _campsitesList,
-        keyword: _searchController.text,
-        firstLoad: true,
-        userId: _userId));
   }
 }

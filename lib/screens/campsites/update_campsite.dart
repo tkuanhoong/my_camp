@@ -98,7 +98,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         'state': _selectedState ?? _campsite.state,
         'faq': _faqEntries!
             .map((faq) =>
-                {"question": faq["question"], "answer": faq["question"]})
+                {"question": faq["question"], "answer": faq["answer"]})
             .toList(),
         'id': _campsite.id,
         'verified': true,
@@ -125,7 +125,7 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
                 child: Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                  context.goNamed('home');
+                  context.replaceNamed('home');
                 },
               ),
             ],
@@ -335,7 +335,6 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
             // _stateController.value = _campsite.state.;
             _isInitialized = true;
           }
-          print(_campsite.name);
           return Stack(children: [
             SingleChildScrollView(
               child: Form(

@@ -195,18 +195,19 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
                           context: context,
                           builder: (BuildContext context) {
                             return StatefulBuilder(
-                              builder: (BuildContext context,
-                                  StateSetter setState) {
+                              builder:
+                                  (BuildContext context, StateSetter setState) {
                                 return Column(
                                   children: [
                                     ListTile(
                                       trailing: _validationMsg
                                           ? const Text(
                                               'More than 10 States Selected',
-                                              style: TextStyle(
-                                                  color: Colors.red),
+                                              style:
+                                                  TextStyle(color: Colors.red),
                                             )
-                                          : const Text('Select Up to 10 States'),
+                                          : const Text(
+                                              'Select Up to 10 States'),
                                       title: const Text(
                                         'States',
                                         style: TextStyle(
@@ -220,8 +221,8 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
                                         itemCount: tempCheckBoxes.length,
                                         itemBuilder: (context, index) {
                                           return CheckboxListTile(
-                                            title: Text(tempCheckBoxes[index]
-                                                ['state']),
+                                            title: Text(
+                                                tempCheckBoxes[index]['state']),
                                             value: tempCheckBoxes[index]
                                                 ['isChecked'],
                                             onChanged: (value) {
@@ -235,9 +236,8 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width:
-                                          MediaQuery.of(context).size.width *
-                                              .9,
+                                      width: MediaQuery.of(context).size.width *
+                                          .9,
                                       child: Padding(
                                         padding: const EdgeInsets.all(8.0),
                                         child: ElevatedButton(
@@ -290,10 +290,11 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
                                 state.searchResults.isNotEmpty)) {
                           _campsitesList = state.searchResults;
                         } else {
-                          _campsitesList = [
-                            ..._campsitesList,
-                            ...state.searchResults
-                          ];
+                            _campsitesList = [
+                              ..._campsitesList,
+                              ...state.searchResults
+                            ];
+                          
                         }
 
                         if (_campsitesList.isEmpty) {
@@ -320,12 +321,12 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
                                     ),
                                   )
                                 : CampsiteItem(
-                                  id: _campsitesList[index].id,
-                                  imagePath: _campsitesList[index].imagePath,
-                                  description: _campsitesList[index].state,
-                                  starRating: 5,
-                                  title: _campsitesList[index].name,
-                                );
+                                    id: _campsitesList[index].id,
+                                    imagePath: _campsitesList[index].imagePath,
+                                    description: _campsitesList[index].state,
+                                    starRating: 5,
+                                    title: _campsitesList[index].name,
+                                  );
                           },
                         );
                       } else {

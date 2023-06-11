@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
+import 'package:my_camp/screens/add_product_page.dart';
 import 'package:my_camp/screens/auth/forgot_screen.dart';
 import 'package:my_camp/screens/auth/login_screen.dart';
 import 'package:my_camp/screens/auth/register_screen.dart';
@@ -8,6 +9,7 @@ import 'package:my_camp/screens/campsite_details.dart';
 import 'package:my_camp/screens/campsites/update_campsite.dart';
 import 'package:my_camp/screens/home.dart';
 import 'package:my_camp/screens/manage_campsite.dart';
+import 'package:my_camp/screens/manage_product_page.dart';
 import 'package:my_camp/screens/search/search_campsite_page.dart';
 import 'package:my_camp/screens/welcome.dart';
 import 'package:my_camp/screens/profile_page.dart';
@@ -111,6 +113,22 @@ final GoRouter router = GoRouter(
                             name: 'campsite-edit',
                             builder: (context, state) {
                               return UpdateCampsitePage(
+                                  campsiteId: state.params['campsiteId']!);
+                            },
+                          ),
+                          GoRoute(
+                            path: "manageProduct",
+                            name: 'campsite-manage-product',
+                            builder: (context, state) {
+                              return ManageProductPage(
+                                  campsiteId: state.params['campsiteId']!);
+                            },
+                          ),
+                          GoRoute(
+                            path: "addProduct",
+                            name: 'campsite-add-product',
+                            builder: (context, state) {
+                              return AddProductPage(
                                   campsiteId: state.params['campsiteId']!);
                             },
                           )

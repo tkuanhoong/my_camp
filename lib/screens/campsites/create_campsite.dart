@@ -11,7 +11,7 @@ import 'package:my_camp/constant/states.dart' as StateList;
 
 class CreateCampsitePage extends StatefulWidget {
   // final String userId;
-  const CreateCampsitePage({Key? key}) : super(key: key);
+  const CreateCampsitePage({super.key});
 
   @override
   _CreateCampsitePageState createState() => _CreateCampsitePageState();
@@ -93,6 +93,7 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
                 child: Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
+                              context.replaceNamed('manage-campsite');
                 },
               ),
             ],
@@ -221,6 +222,12 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
       appBar: AppBar(
         title: Text('Create Campsite'),
         backgroundColor: Colors.indigo,
+        leading: IconButton(
+          icon: Icon(Icons.arrow_back),
+          onPressed: () {
+            context.pop();
+          },
+        ),
       ),
       body: Stack(children: [
         SingleChildScrollView(

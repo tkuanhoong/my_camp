@@ -23,10 +23,12 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
-  runApp(MyCamp());
+  runApp(const MyCamp());
 }
 
 class MyCamp extends StatelessWidget {
+  const MyCamp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocWidget(
