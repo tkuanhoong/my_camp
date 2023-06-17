@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_masked_text2/flutter_masked_text2.dart';
+// import 'package:flutter_masked_text2/flutter_masked_text2.dart';
 
 class AddProductPage extends StatefulWidget {
   final String campsiteId;
@@ -14,7 +14,7 @@ class _AddProductPageState extends State<AddProductPage> {
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _priceController = TextEditingController();
   final TextEditingController _quantityController = TextEditingController();
-  
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

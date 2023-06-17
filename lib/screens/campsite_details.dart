@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -5,6 +6,11 @@ import 'package:go_router/go_router.dart';
 import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
+import 'package:my_camp/screens/reviews/avg_rating&qty_review.dart';
+import 'package:my_camp/screens/reviews/get_avg_rating_text.dart';
+import 'package:my_camp/screens/reviews/qty_review_text.dart';
+import 'package:my_camp/screens/reviews/reviews_widget.dart';
+import '../data/models/reviews.dart';
 import 'review_page.dart';
 import 'package:my_camp/data/models/faq.dart';
 
@@ -112,48 +118,37 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '5.0',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5.0),
-                        const Text(
-                          'Rating',
-                          style: TextStyle(fontSize: 16),
-                        ),
+                        // const SizedBox(height: 5.0),
+                        // const Text(
+                        //   'Rating',
+                        //   style: TextStyle(fontSize: 16),
+                        // ),
                         const SizedBox(height: 10.0),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            RatingBar.builder(
-                              initialRating: 3,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemSize: 24.0,
-                              itemPadding: EdgeInsets.zero,
-                              itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: Colors.amber,
-                              ),
-                              onRatingUpdate: (rating) {},
+                            AverageRatingText(campsiteid: state.campsite.id),
+                            const SizedBox(
+                              width: 5.0,
                             ),
-                            const Spacer(),
-                            const Text(
-                              '1 Review(s)',
-                              style: TextStyle(fontSize: 14),
-                            ),
+                            AverageRatingAndQtyReviews(
+                                campsiteId: state.campsite.id),
                           ],
                         ),
+
                         const SizedBox(height: 5.0),
                         ElevatedButton.icon(
                           onPressed: () {
+                            String campsiteid = state.campsite.id.toString();
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const ReviewPage()),
+                                  builder: (context) =>
+                                      ReviewPage(campsiteId: campsiteid)),
                             );
+                            // print(state.campsite.id);
+                            // print(state.campsite.name);
+                            // print(userId);
                           },
                           icon: const Icon(Icons.star),
                           label: const Text("Add a Review"),
@@ -162,7 +157,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                 .primaryColor, // Set the background color of the button
                           ),
                         ),
-                        const SizedBox(height: 20.0),
+                        Divider(),
                         const Text(
                           'Descriptions',
                           style: TextStyle(
@@ -216,51 +211,14 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                           }).toList(),
                         ),
                         const SizedBox(height: 20.0),
-                        Text(
-                          '1 Review(s) for ${_campsite.name}',
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold),
-                        ),
+                        QtyReviewsText(
+                            campsiteid: state.campsite.id, campsite: _campsite),
                         const SizedBox(height: 5.0),
                         const Divider(
                           color: Colors.black,
                         ),
                         const SizedBox(height: 5.0),
-                        Row(
-                          children: [
-                            const CircleAvatar(
-                              radius: 24.0,
-                              backgroundImage:
-                                  AssetImage('assets/images/profile_image.jpg'),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Text(
-                                  'John Doe',
-                                  style: TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.bold),
-                                ),
-                                RatingBar.builder(
-                                  initialRating: 3,
-                                  minRating: 1,
-                                  direction: Axis.horizontal,
-                                  allowHalfRating: true,
-                                  itemCount: 5,
-                                  itemSize: 24.0,
-                                  itemPadding: EdgeInsets.zero,
-                                  itemBuilder: (context, _) => const Icon(
-                                    Icons.star,
-                                    color: Colors.amber,
-                                  ),
-                                  onRatingUpdate: (rating) {},
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+                        ReviewsWidget(campsiteId: widget.campsiteId),
                         const SizedBox(height: 40.0),
                         BlocBuilder<CampsiteBloc, CampsiteState>(
                           builder: (context, state) {
@@ -271,12 +229,14 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                 height: 40.0,
                                 child: ElevatedButton.icon(
                                     onPressed: () {
-                                      context.goNamed('campsite-manage-product', params: {
-                                        "campsiteId": state.campsite.id
-                                      });
+                                      context.goNamed('campsite-manage-product',
+                                          params: {
+                                            "campsiteId": state.campsite.id
+                                          });
                                     },
                                     label: const Text("Manage Product"),
-                                    icon: const Icon(Icons.inventory_2_outlined)),
+                                    icon:
+                                        const Icon(Icons.inventory_2_outlined)),
                               );
                             }
                             return Row(
