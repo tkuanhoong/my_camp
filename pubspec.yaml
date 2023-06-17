@@ -52,7 +52,12 @@ dependencies:
   bloc_concurrency: ^0.2.2
   image_picker: ^0.8.4+4
   firebase_storage: ^11.0.0
-  flutter_masked_text2: ^0.9.1
+  syncfusion_flutter_datepicker: ^21.2.9
+  intl: ^0.18.1
+  flutter_multi_formatter: ^2.11.1
+  flutter_stripe: ^9.2.1
+  flutter_dotenv: ^5.1.0
+  http: ^0.13.6
 
 dev_dependencies:
   flutter_test:
@@ -96,6 +101,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/images/
+    - assets/.env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

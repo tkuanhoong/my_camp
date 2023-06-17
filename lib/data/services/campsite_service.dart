@@ -96,4 +96,24 @@ class CampsiteService {
         .doc(campsite.id)
         .set(campsite.toMap());
   }
+
+  Future<List<Campsite>> fetchUserBookedCampsites(String userId) async {
+    final bookingQuery =
+        _db.collectionGroup('bookings').where('userId', isEqualTo: userId).orderBy('createdAt', descending: true);
+
+    final campsitePromises = <Future<DocumentSnapshot>>[];
+    await bookingQuery.get().then((querySnapshot) async {
+      for (final doc in querySnapshot.docs) {
+        final campsiteDocRef = doc.reference.parent.parent!.parent.parent!;
+        campsitePromises.add(campsiteDocRef.get());
+      }
+    });
+
+    final campsiteSnapshots = await Future.wait(campsitePromises);
+    final List<Campsite> campsites = campsiteSnapshots
+        .map((snapshot) =>
+            Campsite.fromMap(snapshot.data() as Map<String, dynamic>))
+        .toList();
+    return campsites;
+  }
 }

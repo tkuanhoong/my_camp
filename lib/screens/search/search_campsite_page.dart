@@ -19,6 +19,7 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
   bool _validationMsg = false;
   bool _dataFetched = false;
   Timer? _debounce;
+  late SearchBloc _searchBloc;
   List<Map<String, dynamic>> tempCheckBoxes = [
         {"state": "Selangor", "isChecked": false},
         {"state": "Kuala Lumpur", "isChecked": false},
@@ -55,8 +56,9 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
   @override
   void initState() {
     super.initState();
+    _searchBloc = context.read<SearchBloc>();
     if (!_dataFetched) {
-      context.read<SearchBloc>().add(CampsitesRequested(
+      _searchBloc.add(CampsitesRequested(
           campsitesList: _campsitesList,
           keyword: _searchController.text,
           selectedStates: savedCheckBoxes,
@@ -84,7 +86,7 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
     if (currentScroll >= (maxScroll * 0.9)) {
-      context.read<SearchBloc>().add(CampsitesRequested(
+      _searchBloc.add(CampsitesRequested(
           campsitesList: _campsitesList,
           keyword: _searchController.text,
           selectedStates: savedCheckBoxes));
@@ -95,7 +97,7 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       _campsitesList = [];
-      context.read<SearchBloc>().add(CampsitesRequested(
+      _searchBloc.add(CampsitesRequested(
           campsitesList: _campsitesList,
           keyword: query,
           selectedStates: savedCheckBoxes,
@@ -113,7 +115,7 @@ class _SearchCampsitePageState extends State<SearchCampsitePage> {
             }));
     _campsitesList = [];
     // Trigger the search query
-    context.read<SearchBloc>().add(CampsitesRequested(
+    _searchBloc.add(CampsitesRequested(
         campsitesList: _campsitesList,
         keyword: _searchController.text,
         selectedStates: savedCheckBoxes,

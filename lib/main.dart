@@ -8,6 +8,8 @@ import 'package:my_camp/utility/app_bloc_observer.dart';
 import 'firebase_options.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -23,6 +25,8 @@ void main() async {
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
+  Stripe.publishableKey = 'pk_test_51NJXYOAARRMlaDk6RJoZYDMPzx1BwmAST8vw1HxJJhdn354ZvqWkqv0zbhg0ldy2a5g0tDIY09lqUZOCWsWErMpl00gQjiLls3';
+  await dotenv.load(fileName: "assets/.env");
   runApp(const MyCamp());
 }
 

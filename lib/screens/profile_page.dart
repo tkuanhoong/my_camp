@@ -58,12 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   icon: Icons.edit_note_outlined,
                   iconsize: 35,
                   onPress: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UpdateProfile(),
-                      ),
-                    );
+                    context.pushNamed('profile-edit');
                   }),
               Profile_widget(
                 title: "Settings",
@@ -134,6 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Builder ProfilePhoto_Widget() {
     return Builder(builder: (context) {
+      print(context.watch<SessionCubit>().state.imagePath);
       final imagePath = context.watch<SessionCubit>().state.imagePath;
       return SizedBox(
         width: 150,

@@ -20,11 +20,14 @@ class _ManageCampsiteState extends State<ManageCampsite> {
   String? _userId;
   Timer? _debounce;
   bool _dataFetched = false;
+  bool _hasReachedMax = false;
+  late SearchBloc _searchBloc;
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
   @override
   void initState() {
     _userId = context.read<SessionCubit>().state.id;
+    _searchBloc = context.read<SearchBloc>();
     if (!_dataFetched) {
       _fetchCampsites();
       _dataFetched = true;
@@ -36,7 +39,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
   }
 
   void _fetchCampsites() {
-    context.read<SearchBloc>().add(CampsitesRequested(
+    _searchBloc.add(CampsitesRequested(
         campsitesList: _campsitesList,
         keyword: _searchController.text,
         firstLoad: true,
@@ -50,7 +53,6 @@ class _ManageCampsiteState extends State<ManageCampsite> {
     });
     _scrollController.dispose();
     _debounce?.cancel();
-    _campsitesList.clear();
     _searchController.dispose();
     super.dispose();
   }
@@ -59,7 +61,7 @@ class _ManageCampsiteState extends State<ManageCampsite> {
     if (_debounce?.isActive ?? false) _debounce!.cancel();
     _debounce = Timer(const Duration(milliseconds: 500), () {
       _campsitesList = [];
-      context.read<SearchBloc>().add(CampsitesRequested(
+      _searchBloc.add(CampsitesRequested(
           campsitesList: _campsitesList,
           keyword: query,
           userId: _userId,
@@ -71,7 +73,10 @@ class _ManageCampsiteState extends State<ManageCampsite> {
     final maxScroll = _scrollController.position.maxScrollExtent;
     final currentScroll = _scrollController.offset;
     if (currentScroll >= (maxScroll * 0.9)) {
-      context.read<SearchBloc>().add(CampsitesRequested(
+      if(_hasReachedMax){
+        return;
+      }
+      _searchBloc.add(CampsitesRequested(
           campsitesList: _campsitesList,
           keyword: _searchController.text,
           userId: _userId));
@@ -147,6 +152,9 @@ class _ManageCampsiteState extends State<ManageCampsite> {
                     return const Center(
                       child: Text('No results found'),
                     );
+                  }
+                  if(state.hasReachedMax){
+                    _hasReachedMax = true;
                   }
                   return ListView.builder(
                     controller: _scrollController,

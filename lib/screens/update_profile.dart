@@ -8,7 +8,7 @@ import 'package:my_camp/logic/blocs/profile/profile_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 
 class UpdateProfile extends StatefulWidget {
-  UpdateProfile({Key? key}) : super(key: key);
+  const UpdateProfile({Key? key}) : super(key: key);
 
   @override
   State<UpdateProfile> createState() => _UpdateProfileState();
@@ -22,8 +22,6 @@ class _UpdateProfileState extends State<UpdateProfile> {
   File? _image;
   @override
   void initState() {
-    context.read<ProfileBloc>().add(
-        ProfileFetchRequested(userId: context.read<SessionCubit>().state.id!));
     _nameController.text = context.read<SessionCubit>().state.userName!;
     _emailController.text = context.read<SessionCubit>().state.email!;
     super.initState();
