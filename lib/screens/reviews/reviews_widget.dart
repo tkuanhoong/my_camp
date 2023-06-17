@@ -34,8 +34,8 @@ class ReviewsWidget extends StatelessWidget {
 
         final String imagePath =
             userSnapshot.data()?['imagePath'] as String? ?? '';
-        final String username = userSnapshot.data()?['name'] as String? ??
-            'Anonymoussssssssssssssssssssssssssssssssssssssssssssss';
+        final String username =
+            userSnapshot.data()?['name'] as String? ?? 'Anonymous';
 
         return Review(
           uid: data['uid'],

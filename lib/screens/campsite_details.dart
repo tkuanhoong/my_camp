@@ -133,19 +133,16 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
-                          '5.0',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5.0),
+                        const SizedBox(height: 10.0),
                         Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            const Text(
-                              'Rating',
-                              style: TextStyle(fontSize: 16),
+                            AverageRatingText(campsiteid: state.campsite.id),
+                            const SizedBox(
+                              width: 5.0,
                             ),
-                            const Spacer(),
+                            AverageRatingAndQtyReviews(
+                                campsiteId: state.campsite.id),
                             BlocBuilder<CampsiteBloc, CampsiteState>(
                               builder: (context, state) {
                                 if (state is CampsiteLoaded &&
@@ -214,19 +211,6 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 10.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            AverageRatingText(campsiteid: state.campsite.id),
-                            const SizedBox(
-                              width: 5.0,
-                            ),
-                            AverageRatingAndQtyReviews(
-                                campsiteId: state.campsite.id),
-                          ],
-                        ),
-
                         const SizedBox(height: 5.0),
                         ElevatedButton.icon(
                           onPressed: () {
