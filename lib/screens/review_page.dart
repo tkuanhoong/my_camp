@@ -1,9 +1,24 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'campsite_details.dart'; 
+import 'package:my_camp/logic/cubits/session/session_cubit.dart';
+import 'campsite_details.dart';
+import 'package:my_camp/router.dart';
 
 class ReviewPage extends StatefulWidget {
-  const ReviewPage({Key? key}) : super(key: key);
+  //required campsiteid and userid
+  final String campsiteId;
+  // final String userId;
+
+  const ReviewPage(
+      {required this.campsiteId,
+      // required this.userId,
+      Key? key})
+      : super(key: key);
 
   @override
   _ReviewPageState createState() => _ReviewPageState();
@@ -12,10 +27,17 @@ class ReviewPage extends StatefulWidget {
 class _ReviewPageState extends State<ReviewPage> {
   String _reviewText = '';
   double _rating = 0;
+  @override
+  void initState() {
+    super.initState();
+    String campsiteId = widget.campsiteId;
+    // print(campsiteId);
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -92,14 +114,14 @@ class _ReviewPageState extends State<ReviewPage> {
                       decoration: const InputDecoration(
                         labelText: 'Write your review',
                         filled: true,
-                        fillColor:  Color(0xFFF1F1F1),
+                        fillColor: Color(0xFFF1F1F1),
                         border: OutlineInputBorder(),
                       ),
                     ),
                     const SizedBox(height: 24.0),
                     ElevatedButton(
                       onPressed: () {
-                        saveReview();
+                        saveReview(id: widget.campsiteId);
                       },
                       child: Text(
                         'Save',
@@ -124,7 +146,9 @@ class _ReviewPageState extends State<ReviewPage> {
     );
   }
 
-  void saveReview() {
+  void saveReview({required String id}) async {
+    String campsiteId = id;
+    print(id);
     if (_rating == 0) {
       showDialog(
         context: context,
@@ -168,8 +192,61 @@ class _ReviewPageState extends State<ReviewPage> {
     }
 
     // Perform save operation here with _reviewText and _rating
-    // saveReviewToDatabase(_reviewText, _rating);
+    // _reviewText
+    // _rating
 
-    Navigator.pushReplacementNamed(context, '/campsite_details'); 
+    // DocumentReference campsiteRef = FirebaseFirestore.instance
+    //     .collection('users')
+    //     .doc(userId)
+    //     .collection('campsites')
+    //     .doc(campsiteId);
+    // CollectionReference reviewCollection = campsiteRef.collection('reviews');
+    // FirebaseFirestore.instance
+    //     .collection('users')
+    //     .where(FieldPath.documentId, isEqualTo: campsiteId)
+    //     .limit(1)
+    //     .get()
+    //     .then((QuerySnapshot<Map<String, dynamic>> querySnapshot) {
+    //   if (querySnapshot.docs.isNotEmpty) {
+    //     var parentDocumentId = querySnapshot.docs[0].id;
+    //     print('Parent document ID: $parentDocumentId');
+    //   } else {
+    //     // The campsite or its parent does not exist
+    //     print(campsiteId);
+    //     print('The campsite or its parent does not exist');
+    //   }
+    // }).catchError((error) {
+    //   // Handle any error that occurred
+    //   print(error);
+    // });
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collectionGroup('campsites')
+        .where('id', isEqualTo: campsiteId)
+        .get();
+
+    var uid = FirebaseAuth.instance.currentUser!.uid;
+
+// get imagepath from firebase storage users collection
+    var collection = FirebaseFirestore.instance.collection('users');
+    var docSnapshot = await collection.doc(uid).get();
+    if (docSnapshot.exists) {
+      Map<String, dynamic> data = docSnapshot.data()!;
+
+      // You can then retrieve the value from the Map like this:
+      var imagepath = data['imagePath'];
+    }
+
+    snapshot.docs.first.reference.collection('reviews').add({
+      'uid': uid,
+      'review': _reviewText,
+      'rating': _rating,
+      'timestamp': DateTime.now(),
+    });
+
+    // saveReviewToDatabase(_reviewText, _rating);
+// navigate back to campsite details page
+
+    Navigator.pop(context);
   }
 }

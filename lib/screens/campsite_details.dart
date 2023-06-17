@@ -13,6 +13,11 @@ import 'package:my_camp/logic/blocs/booking/booking_bloc.dart';
 import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/blocs/campsite_event/campsite_event_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
+import 'package:my_camp/screens/reviews/avg_rating&qty_review.dart';
+import 'package:my_camp/screens/reviews/get_avg_rating_text.dart';
+import 'package:my_camp/screens/reviews/qty_review_text.dart';
+import 'package:my_camp/screens/reviews/reviews_widget.dart';
+import '../data/models/reviews.dart';
 import 'review_page.dart';
 import 'package:my_camp/data/models/faq.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -261,7 +266,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<BookingBloc,BookingState>(
+    return BlocListener<BookingBloc, BookingState>(
       listener: (context, state) {
         if (state is BookingSuccess) {
           context.goNamed('booking_success');
@@ -345,122 +350,99 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                           ),
                         ),
                       ),
-                    const SizedBox(height: 20.0),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Text(
-                          '5.0',
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 5.0),
-                        Row(
-                          children: [
-                            const Text(
-                              'Rating',
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            const Spacer(),
-                            BlocBuilder<CampsiteBloc, CampsiteState>(
-                              builder: (context, state) {
-                                if (state is CampsiteLoaded &&
-                                    !state.isCampsiteOwner) {
-                                  return IconButton(
-                                    onPressed: () async {
-                                      // print(state.campsite.favourites);
-                                      // print(isFavourite);
-                                      if (isFavourite!) {
-                                        print('a');
-                                        await FirebaseFirestore.instance
-                                            .collectionGroup('campsites')
-                                            .where('id',
-                                                isEqualTo: _campsite.id)
-                                            .get()
-                                            .then((val) => val.docs.forEach(
-                                                (doc) => doc.reference.update({
-                                                      'favourites': FieldValue
-                                                          .arrayRemove([
-                                                        context
-                                                            .read<
-                                                                SessionCubit>()
-                                                            .state
-                                                            .id
-                                                      ])
-                                                    })));
-
-                                        setState(() {
-                                          print('a');
-                                          isFavourite = !isFavourite!;
-                                        });
-                                        print('aa');
-                                      } else {
-                                        print('b');
-                                        await FirebaseFirestore.instance
-                                            .collectionGroup('campsites')
-                                            .where('id',
-                                                isEqualTo: _campsite.id)
-                                            .get()
-                                            .then((val) => val.docs.forEach(
-                                                (doc) => doc.reference.update({
-                                                      'favourites': FieldValue
-                                                          .arrayUnion([
-                                                        context
-                                                            .read<
-                                                                SessionCubit>()
-                                                            .state
-                                                            .id
-                                                      ])
-                                                    })));
-                                        setState(() {
-                                          print('b');
-                                          isFavourite = !isFavourite!;
-                                        });
-                                        print('bb');
-                                      }
-                                    },
-                                    icon: Icon(isFavourite!
-                                        ? CupertinoIcons.heart_fill
-                                        : CupertinoIcons.heart),
-                                    color: Colors.red,
-                                  );
-                                }
-                                return Container();
-                              },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10.0),
-                        Row(
-                          children: [
-                            RatingBar.builder(
-                              initialRating: 3,
-                              minRating: 1,
-                              direction: Axis.horizontal,
-                              allowHalfRating: true,
-                              itemCount: 5,
-                              itemSize: 24.0,
-                              itemPadding: EdgeInsets.zero,
-                              itemBuilder: (context, _) => const Icon(
-                                Icons.star,
-                                color: Colors.amber,
+                      const SizedBox(height: 20.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 10.0),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              AverageRatingText(campsiteid: state.campsite.id),
+                              const SizedBox(
+                                width: 5.0,
                               ),
-                              onRatingUpdate: (rating) {},
-                            ),
-                            const Spacer(),
-                            const Text(
-                              '1 Review(s)',
-                              style: TextStyle(fontSize: 14),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 5.0),
+                              AverageRatingAndQtyReviews(
+                                  campsiteId: state.campsite.id),
+                              BlocBuilder<CampsiteBloc, CampsiteState>(
+                                builder: (context, state) {
+                                  if (state is CampsiteLoaded &&
+                                      !state.isCampsiteOwner) {
+                                    return IconButton(
+                                      onPressed: () async {
+                                        // print(state.campsite.favourites);
+                                        // print(isFavourite);
+                                        if (isFavourite!) {
+                                          print('a');
+                                          await FirebaseFirestore.instance
+                                              .collectionGroup('campsites')
+                                              .where('id',
+                                                  isEqualTo: _campsite.id)
+                                              .get()
+                                              .then((val) => val.docs.forEach(
+                                                  (doc) =>
+                                                      doc.reference.update({
+                                                        'favourites': FieldValue
+                                                            .arrayRemove([
+                                                          context
+                                                              .read<
+                                                                  SessionCubit>()
+                                                              .state
+                                                              .id
+                                                        ])
+                                                      })));
+
+                                          setState(() {
+                                            print('a');
+                                            isFavourite = !isFavourite!;
+                                          });
+                                          print('aa');
+                                        } else {
+                                          print('b');
+                                          await FirebaseFirestore.instance
+                                              .collectionGroup('campsites')
+                                              .where('id',
+                                                  isEqualTo: _campsite.id)
+                                              .get()
+                                              .then((val) => val.docs.forEach(
+                                                  (doc) =>
+                                                      doc.reference.update({
+                                                        'favourites': FieldValue
+                                                            .arrayUnion([
+                                                          context
+                                                              .read<
+                                                                  SessionCubit>()
+                                                              .state
+                                                              .id
+                                                        ])
+                                                      })));
+                                          setState(() {
+                                            print('b');
+                                            isFavourite = !isFavourite!;
+                                          });
+                                          print('bb');
+                                        }
+                                      },
+                                      icon: Icon(isFavourite!
+                                          ? CupertinoIcons.heart_fill
+                                          : CupertinoIcons.heart),
+                                      color: Colors.red,
+                                    );
+                                  }
+                                  return Container();
+                                },
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 5.0),
                           ElevatedButton.icon(
                             onPressed: () {
+                              String campsiteid = state.campsite.id.toString();
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => const ReviewPage()),
+                                    builder: (context) =>
+                                        ReviewPage(campsiteId: campsiteid)),
                               );
                             },
                             icon: const Icon(Icons.star),
@@ -470,6 +452,90 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                   .primaryColor, // Set the background color of the button
                             ),
                           ),
+                          Divider(),
+                          const Text(
+                            'Descriptions',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            _campsite.description,
+                            style: TextStyle(fontSize: 14),
+                          ),
+                          const SizedBox(height: 20.0),
+                          const Text(
+                            'FAQ',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold),
+                          ),
+                          const SizedBox(height: 10.0),
+                          ExpansionPanelList(
+                            elevation: 0,
+                            expandedHeaderPadding: EdgeInsets.zero,
+                            expansionCallback: (index, isExpanded) {
+                              setState(() {
+                                _expansionPanelItems[index].isExpanded =
+                                    !isExpanded;
+                              });
+                            },
+                            children: _expansionPanelItems
+                                .map<ExpansionPanel>((item) {
+                              return ExpansionPanel(
+                                headerBuilder: (context, isExpanded) {
+                                  return ListTile(
+                                    title: Text(
+                                      item.faq.question!,
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  );
+                                },
+                                body: Padding(
+                                  padding: const EdgeInsets.fromLTRB(
+                                      16.0, 8.0, 16.0, 16.0),
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      item.faq.answer!,
+                                      textAlign: TextAlign.start,
+                                    ),
+                                  ),
+                                ),
+                                isExpanded: item.isExpanded,
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 20.0),
+                          QtyReviewsText(
+                              campsiteid: state.campsite.id,
+                              campsite: _campsite),
+                          const SizedBox(height: 5.0),
+                          const Divider(
+                            color: Colors.black,
+                          ),
+                          const SizedBox(height: 5.0),
+                          ReviewsWidget(campsiteId: widget.campsiteId),
+                          const SizedBox(height: 40.0),
+                          BlocBuilder<CampsiteBloc, CampsiteState>(
+                              builder: (context, state) {
+                            if (state is CampsiteLoaded &&
+                                state.isCampsiteOwner) {
+                              return SizedBox(
+                                width: double.infinity,
+                                height: 40.0,
+                                child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      context.goNamed('campsite-manage-product',
+                                          params: {
+                                            "campsiteId": state.campsite.id
+                                          });
+                                    },
+                                    label: const Text("Manage Product"),
+                                    icon:
+                                        const Icon(Icons.inventory_2_outlined)),
+                              );
+                            }
+                          }),
                           const SizedBox(height: 20.0),
                           const Divider(),
                           const SizedBox(height: 20.0),
@@ -513,8 +579,8 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                     !isExpanded;
                               });
                             },
-                            children:
-                                _expansionPanelItems.map<ExpansionPanel>((item) {
+                            children: _expansionPanelItems
+                                .map<ExpansionPanel>((item) {
                               return ExpansionPanel(
                                 headerBuilder: (context, isExpanded) {
                                   return ListTile(
@@ -555,8 +621,8 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                             children: [
                               const CircleAvatar(
                                 radius: 24.0,
-                                backgroundImage:
-                                    AssetImage('assets/images/profile_image.jpg'),
+                                backgroundImage: AssetImage(
+                                    'assets/images/profile_image.jpg'),
                               ),
                               const SizedBox(width: 10.0),
                               Column(
@@ -596,7 +662,8 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                   height: 40.0,
                                   child: ElevatedButton.icon(
                                       onPressed: () {
-                                        context.goNamed('campsite-manage-product',
+                                        context.goNamed(
+                                            'campsite-manage-product',
                                             params: {
                                               "campsiteId": state.campsite.id
                                             });
@@ -636,66 +703,67 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                                             CampsiteEventState>(
                                                         builder:
                                                             (context, state) {
-                                                          if (state
-                                                              is CampsiteEventsLoaded) {
-                                                            if (state
-                                                                .campsiteEvents
-                                                                .isEmpty) {
-                                                              return Expanded(
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .center,
-                                                                  children: [
-                                                                    Icon(
-                                                                      Icons
-                                                                          .event_busy,
-                                                                      size: MediaQuery.of(context)
-                                                                              .size
-                                                                              .width /
-                                                                          4,
-                                                                      color: Theme.of(
+                                                      if (state
+                                                          is CampsiteEventsLoaded) {
+                                                        if (state.campsiteEvents
+                                                            .isEmpty) {
+                                                          return Expanded(
+                                                            child: Column(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .center,
+                                                              children: [
+                                                                Icon(
+                                                                  Icons
+                                                                      .event_busy,
+                                                                  size: MediaQuery.of(
                                                                               context)
-                                                                          .primaryColor,
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height: 20,
-                                                                    ),
-                                                                    const Text(
-                                                                      "No event found",
-                                                                      style: TextStyle(
-                                                                          fontSize:
-                                                                              20,
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height: 10,
-                                                                    ),
-                                                                    const Text(
-                                                                      "Seem like this campsite haven't add any events yet...",
-                                                                      textAlign:
-                                                                          TextAlign
-                                                                              .center,
-                                                                    ),
-                                                                  ],
+                                                                          .size
+                                                                          .width /
+                                                                      4,
+                                                                  color: Theme.of(
+                                                                          context)
+                                                                      .primaryColor,
                                                                 ),
-                                                              );
-                                                            }
-                                                            return _buildChips(
-                                                                campsiteEvents: state
-                                                                    .campsiteEvents);
-                                                          }
-                                                          if (state
-                                                              is SelectedCampsiteEvent) {
-                                                            return _buildChips(
-                                                                campsiteEvents: state
-                                                                    .campsiteEvents,
-                                                                selectedIndex: state
-                                                                    .selectedIndex);
-                                                          }
-                                                          return const SizedBox();
-                                                        }),
+                                                                const SizedBox(
+                                                                  height: 20,
+                                                                ),
+                                                                const Text(
+                                                                  "No event found",
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          20,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold),
+                                                                ),
+                                                                const SizedBox(
+                                                                  height: 10,
+                                                                ),
+                                                                const Text(
+                                                                  "Seem like this campsite haven't add any events yet...",
+                                                                  textAlign:
+                                                                      TextAlign
+                                                                          .center,
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          );
+                                                        }
+                                                        return _buildChips(
+                                                            campsiteEvents: state
+                                                                .campsiteEvents);
+                                                      }
+                                                      if (state
+                                                          is SelectedCampsiteEvent) {
+                                                        return _buildChips(
+                                                            campsiteEvents: state
+                                                                .campsiteEvents,
+                                                            selectedIndex: state
+                                                                .selectedIndex);
+                                                      }
+                                                      return const SizedBox();
+                                                    }),
                                                   )
                                                 ],
                                               );
@@ -708,14 +776,15 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                             .primaryColor, // Set the background color of the button
                                       ),
                                     ),
-                                  ),],
-                                );
+                                  ),
+                                ],
+                              );
                             },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
                 ),
               );
             } else {
