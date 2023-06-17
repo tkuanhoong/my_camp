@@ -93,7 +93,7 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
                 child: Text('OK'),
                 onPressed: () {
                   Navigator.of(context).pop();
-                              context.replaceNamed('manage-campsite');
+                  context.replaceNamed('manage-campsite');
                 },
               ),
             ],
@@ -153,6 +153,7 @@ class _CreateCampsitePageState extends State<CreateCampsitePage> {
         'verified': true,
         'createdAt': DateTime.now(),
         // 'updated_at': DateTime.now(),
+        'favourites': [],
       };
 
       // Save the data to Firestore

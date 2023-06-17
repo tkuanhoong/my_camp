@@ -97,13 +97,14 @@ class _UpdateCampsitePageState extends State<UpdateCampsitePage> {
         'address': _addressController.text,
         'state': _selectedState ?? _campsite.state,
         'faq': _faqEntries!
-            .map((faq) =>
-                {"question": faq["question"], "answer": faq["answer"]})
+            .map(
+                (faq) => {"question": faq["question"], "answer": faq["answer"]})
             .toList(),
         'id': _campsite.id,
         'verified': true,
         'createdAt': DateTime.now(),
         // 'updated_at': DateTime.now(),
+        'favourites': _campsite.favourites,
       };
 
       // Find campsite document
