@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -24,6 +25,8 @@ class CampsiteDetails extends StatefulWidget {
 
 class _CampsiteDetailsState extends State<CampsiteDetails> {
   late Campsite _campsite;
+  bool? isFavourite = false;
+  int count = 0;
   @override
   initState() {
     context.read<CampsiteBloc>().add(SingleCampsiteRequested(
@@ -79,6 +82,18 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
             return const Center(child: CircularProgressIndicator());
           } else if (state is CampsiteLoaded) {
             _campsite = state.campsite;
+            print(_campsite.name);
+            print(_campsite.id);
+            print(widget.campsiteId);
+            print(_campsite.favourites);
+            print(1);
+            count = count + 1;
+            if (count == 2) {
+              print('x');
+              isFavourite = _campsite.favourites!
+                  .contains(context.read<SessionCubit>().state.id);
+              print(isFavourite);
+            }
 
             _expansionPanelItems = [
               ...state.campsite.faq!
@@ -118,11 +133,87 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        // const SizedBox(height: 5.0),
-                        // const Text(
-                        //   'Rating',
-                        //   style: TextStyle(fontSize: 16),
-                        // ),
+                        const Text(
+                          '5.0',
+                          style: TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
+                        ),
+                        const SizedBox(height: 5.0),
+                        Row(
+                          children: [
+                            const Text(
+                              'Rating',
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            const Spacer(),
+                            BlocBuilder<CampsiteBloc, CampsiteState>(
+                              builder: (context, state) {
+                                if (state is CampsiteLoaded &&
+                                    !state.isCampsiteOwner) {
+                                  return IconButton(
+                                    onPressed: () async {
+                                      // print(state.campsite.favourites);
+                                      // print(isFavourite);
+                                      if (isFavourite!) {
+                                        print('a');
+                                        await FirebaseFirestore.instance
+                                            .collectionGroup('campsites')
+                                            .where('id',
+                                                isEqualTo: _campsite.id)
+                                            .get()
+                                            .then((val) => val.docs.forEach(
+                                                (doc) => doc.reference.update({
+                                                      'favourites': FieldValue
+                                                          .arrayRemove([
+                                                        context
+                                                            .read<
+                                                                SessionCubit>()
+                                                            .state
+                                                            .id
+                                                      ])
+                                                    })));
+
+                                        setState(() {
+                                          print('a');
+                                          isFavourite = !isFavourite!;
+                                        });
+                                        print('aa');
+                                      } else {
+                                        print('b');
+                                        await FirebaseFirestore.instance
+                                            .collectionGroup('campsites')
+                                            .where('id',
+                                                isEqualTo: _campsite.id)
+                                            .get()
+                                            .then((val) => val.docs.forEach(
+                                                (doc) => doc.reference.update({
+                                                      'favourites': FieldValue
+                                                          .arrayUnion([
+                                                        context
+                                                            .read<
+                                                                SessionCubit>()
+                                                            .state
+                                                            .id
+                                                      ])
+                                                    })));
+                                        setState(() {
+                                          print('b');
+                                          isFavourite = !isFavourite!;
+                                        });
+                                        print('bb');
+                                      }
+                                    },
+                                    icon: Icon(isFavourite!
+                                        ? CupertinoIcons.heart_fill
+                                        : CupertinoIcons.heart),
+                                    color: Colors.red,
+                                  );
+                                }
+                                return Container();
+                              },
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 10.0),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.start,
@@ -146,9 +237,6 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                   builder: (context) =>
                                       ReviewPage(campsiteId: campsiteid)),
                             );
-                            // print(state.campsite.id);
-                            // print(state.campsite.name);
-                            // print(userId);
                           },
                           icon: const Icon(Icons.star),
                           label: const Text("Add a Review"),
@@ -243,20 +331,6 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                               mainAxisAlignment: MainAxisAlignment
                                   .spaceBetween, // Align buttons at the opposite ends
                               children: [
-                                Expanded(
-                                  child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      // Add your button click logic here
-                                    },
-                                    icon: const Icon(Icons.star),
-                                    label: const Text("Set As Favourite"),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Theme.of(context)
-                                          .primaryColor, // Set the background color of the button
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 10.0),
                                 Expanded(
                                   child: ElevatedButton.icon(
                                     onPressed: () {

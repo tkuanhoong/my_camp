@@ -30,8 +30,8 @@ class _HomeState extends State<Home> {
             context.goNamed('manage-campsite');
             break;
           case "Favorites":
-            // context.goNamed('manage-campsite');
-                    print('Tapped on $label');
+            context.goNamed('view-favourite');
+                    // print('Tapped on $label');
             break;
           case "My Bookings":
             context.goNamed('bookings');

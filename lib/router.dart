@@ -15,6 +15,7 @@ import 'package:my_camp/screens/welcome.dart';
 import 'package:my_camp/screens/profile_page.dart';
 import 'package:my_camp/screens/campsites/create_campsite.dart';
 import 'package:my_camp/screens/booking_campsite.dart';
+import 'package:my_camp/screens/view_favourite_page.dart';
 
 // final PhoneAuthBloc _phoneAuthBloc =
 //     PhoneAuthBloc(phoneAuthRepository: _phoneAuthRepository);
@@ -154,6 +155,13 @@ final GoRouter router = GoRouter(
                   path: 'bookings',
                   builder: (BuildContext context, GoRouterState state) {
                     return const BookingCampsite();
+                  },
+                ),
+                GoRoute(
+                  name: 'view-favourite',
+                  path: 'favourites',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return const ViewFavouriteCampsite();
                   },
                 )
               ]),

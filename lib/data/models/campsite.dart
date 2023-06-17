@@ -12,6 +12,7 @@ class Campsite extends Equatable {
   final String imagePath;
   final List? faq;
   final bool verified;
+  final List? favourites;
 
   // Constructor
   const Campsite({
@@ -23,6 +24,7 @@ class Campsite extends Equatable {
     required this.imagePath,
     this.faq,
     required this.verified,
+    this.favourites,
   });
 
   Campsite copyWith({
@@ -34,6 +36,7 @@ class Campsite extends Equatable {
     String? imagePath,
     List? faq,
     bool? verified,
+    List? favourites,
   }) {
     return Campsite(
       id: id ?? this.id,
@@ -44,6 +47,7 @@ class Campsite extends Equatable {
       imagePath: imagePath ?? this.imagePath,
       faq: faq ?? this.faq,
       verified: verified ?? this.verified,
+      favourites: favourites ?? this.favourites,
     );
   }
 
@@ -57,6 +61,7 @@ class Campsite extends Equatable {
       'imagePath': imagePath,
       'faq': faq,
       'verified': verified,
+      'favourites': favourites,
     };
   }
 
@@ -68,14 +73,24 @@ class Campsite extends Equatable {
       address: map['address'] as String,
       state: map['state'] as String,
       imagePath: map['imagePath'] as String,
-      faq: map['faq'] != null ? List.from((map['faq'] as List).map((x) => x),) : null,
+      faq: map['faq'] != null
+          ? List.from(
+              (map['faq'] as List).map((x) => x),
+            )
+          : null,
       verified: map['verified'] as bool,
+      favourites: map['favourites'] != null
+          ? List.from(
+              (map['favourites'] as List).map((x) => x),
+            )
+          : null,
     );
   }
 
   String toJson() => json.encode(toMap());
 
-  factory Campsite.fromJson(String source) => Campsite.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Campsite.fromJson(String source) =>
+      Campsite.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
   bool get stringify => true;
@@ -91,6 +106,7 @@ class Campsite extends Equatable {
       imagePath,
       faq,
       verified,
+      favourites,
     ];
   }
 }
