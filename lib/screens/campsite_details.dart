@@ -370,10 +370,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                       !state.isCampsiteOwner) {
                                     return IconButton(
                                       onPressed: () async {
-                                        // print(state.campsite.favourites);
-                                        // print(isFavourite);
                                         if (isFavourite!) {
-                                          print('a');
                                           await FirebaseFirestore.instance
                                               .collectionGroup('campsites')
                                               .where('id',
@@ -452,91 +449,7 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                                   .primaryColor, // Set the background color of the button
                             ),
                           ),
-                          Divider(),
-                          const Text(
-                            'Descriptions',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          Text(
-                            _campsite.description,
-                            style: TextStyle(fontSize: 14),
-                          ),
-                          const SizedBox(height: 20.0),
-                          const Text(
-                            'FAQ',
-                            style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(height: 10.0),
-                          ExpansionPanelList(
-                            elevation: 0,
-                            expandedHeaderPadding: EdgeInsets.zero,
-                            expansionCallback: (index, isExpanded) {
-                              setState(() {
-                                _expansionPanelItems[index].isExpanded =
-                                    !isExpanded;
-                              });
-                            },
-                            children: _expansionPanelItems
-                                .map<ExpansionPanel>((item) {
-                              return ExpansionPanel(
-                                headerBuilder: (context, isExpanded) {
-                                  return ListTile(
-                                    title: Text(
-                                      item.faq.question!,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold),
-                                    ),
-                                  );
-                                },
-                                body: Padding(
-                                  padding: const EdgeInsets.fromLTRB(
-                                      16.0, 8.0, 16.0, 16.0),
-                                  child: Align(
-                                    alignment: Alignment.centerLeft,
-                                    child: Text(
-                                      item.faq.answer!,
-                                      textAlign: TextAlign.start,
-                                    ),
-                                  ),
-                                ),
-                                isExpanded: item.isExpanded,
-                              );
-                            }).toList(),
-                          ),
-                          const SizedBox(height: 20.0),
-                          QtyReviewsText(
-                              campsiteid: state.campsite.id,
-                              campsite: _campsite),
                           const SizedBox(height: 5.0),
-                          const Divider(
-                            color: Colors.black,
-                          ),
-                          const SizedBox(height: 5.0),
-                          ReviewsWidget(campsiteId: widget.campsiteId),
-                          const SizedBox(height: 40.0),
-                          BlocBuilder<CampsiteBloc, CampsiteState>(
-                              builder: (context, state) {
-                            if (state is CampsiteLoaded &&
-                                state.isCampsiteOwner) {
-                              return SizedBox(
-                                width: double.infinity,
-                                height: 40.0,
-                                child: ElevatedButton.icon(
-                                    onPressed: () {
-                                      context.goNamed('campsite-manage-product',
-                                          params: {
-                                            "campsiteId": state.campsite.id
-                                          });
-                                    },
-                                    label: const Text("Manage Product"),
-                                    icon:
-                                        const Icon(Icons.inventory_2_outlined)),
-                              );
-                            }
-                          }),
-                          const SizedBox(height: 20.0),
                           const Divider(),
                           const SizedBox(height: 20.0),
                           const Text(
@@ -607,51 +520,15 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
                             }).toList(),
                           ),
                           const SizedBox(height: 20.0),
-                          Text(
-                            '1 Review(s) for ${_campsite.name}',
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.bold),
-                          ),
+                          QtyReviewsText(
+                              campsiteid: state.campsite.id,
+                              campsite: _campsite),
                           const SizedBox(height: 5.0),
                           const Divider(
                             color: Colors.black,
                           ),
                           const SizedBox(height: 5.0),
-                          Row(
-                            children: [
-                              const CircleAvatar(
-                                radius: 24.0,
-                                backgroundImage: AssetImage(
-                                    'assets/images/profile_image.jpg'),
-                              ),
-                              const SizedBox(width: 10.0),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'John Doe',
-                                    style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  RatingBar.builder(
-                                    initialRating: 3,
-                                    minRating: 1,
-                                    direction: Axis.horizontal,
-                                    allowHalfRating: true,
-                                    itemCount: 5,
-                                    itemSize: 24.0,
-                                    itemPadding: EdgeInsets.zero,
-                                    itemBuilder: (context, _) => const Icon(
-                                      Icons.star,
-                                      color: Colors.amber,
-                                    ),
-                                    onRatingUpdate: (rating) {},
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                          ReviewsWidget(campsiteId: widget.campsiteId),
                           const SizedBox(height: 40.0),
                           BlocBuilder<CampsiteBloc, CampsiteState>(
                             builder: (context, state) {
