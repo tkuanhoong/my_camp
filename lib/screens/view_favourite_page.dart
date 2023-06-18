@@ -6,7 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/logic/blocs/search/search_bloc.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
-import 'package:my_camp/widgets/campsite_item.dart';
+import 'package:my_camp/widgets/favourite_campsite_item.dart';
 import 'package:go_router/go_router.dart';
 
 class ViewFavouriteCampsite extends StatefulWidget {
@@ -29,7 +29,19 @@ class _ViewFavouriteCampsite extends State<ViewFavouriteCampsite> {
   @override
   void initState() {
     _userId = context.read<SessionCubit>().state.id;
-    FirebaseFirestore.instance
+    getData();
+    if (!_dataFetched) {
+      _fetchCampsites();
+      _dataFetched = true;
+    }
+    _scrollController.addListener(() {
+      _onScroll(context);
+    });
+    super.initState();
+  }
+
+  void getData() async {
+    await FirebaseFirestore.instance
         .collectionGroup('campsites')
         .where('favourites', arrayContains: _userId)
         .get()
@@ -41,14 +53,6 @@ class _ViewFavouriteCampsite extends State<ViewFavouriteCampsite> {
         _campsitesList.add(campsite);
       });
     });
-    if (!_dataFetched) {
-      _fetchCampsites();
-      _dataFetched = true;
-    }
-    _scrollController.addListener(() {
-      _onScroll(context);
-    });
-    super.initState();
   }
 
   void _fetchCampsites() {
@@ -197,7 +201,7 @@ class _ViewFavouriteCampsite extends State<ViewFavouriteCampsite> {
                     //     : _campsitesList.length + 1,
                     itemBuilder: (context, index) {
                       if (index < _campsitesList.length) {
-                        return CampsiteItem(
+                        return FavouriteCampsiteItem(
                           id: _campsitesList[index].id,
                           imagePath: _campsitesList[index].imagePath,
                           description: _campsitesList[index].state,
