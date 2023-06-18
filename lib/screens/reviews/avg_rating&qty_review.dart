@@ -41,7 +41,9 @@ class AverageRatingAndQtyReviews extends StatelessWidget {
         }
 
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return CircularProgressIndicator(
+            color: Colors.transparent,
+          );
         }
 
         final reviews = snapshot.data!;
@@ -51,7 +53,7 @@ class AverageRatingAndQtyReviews extends StatelessWidget {
         return Row(
           children: [
             RatingBar.builder(
-              initialRating: averageRating,
+              initialRating: averageRating.isNaN ? 0 : averageRating,
               minRating: 1,
               direction: Axis.horizontal,
               allowHalfRating: true,

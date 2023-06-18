@@ -62,7 +62,9 @@ class ReviewsWidget extends StatelessWidget {
       future: fetchReviews(),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator();
+          return CircularProgressIndicator(
+            color: Colors.transparent,
+          );
         } else if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {

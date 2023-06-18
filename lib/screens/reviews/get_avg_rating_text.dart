@@ -40,11 +40,17 @@ class AverageRatingText extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return CircularProgressIndicator(
+              color: Colors.transparent,
+            );
           }
 
           final reviews = snapshot.data!;
-          final averageRating = calculateAverageRating(reviews).toString();
+          var avrRating = calculateAverageRating(reviews);
+
+          avrRating.isNaN ? avrRating = 0 : avrRating = avrRating;
+
+          final averageRating = avrRating.toString();
           return Text(
             averageRating,
             style: TextStyle(fontSize: 22),

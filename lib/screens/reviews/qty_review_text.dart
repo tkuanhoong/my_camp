@@ -45,7 +45,9 @@ class QtyReviewsText extends StatelessWidget {
           }
 
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return CircularProgressIndicator(
+              color: Colors.transparent,
+            );
           }
 
           final reviews = snapshot.data!;
