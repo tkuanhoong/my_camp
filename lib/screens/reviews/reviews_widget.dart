@@ -10,7 +10,7 @@ class ReviewsWidget extends StatelessWidget {
     Key? key,
     required this.campsiteId,
   });
-  Future<List<Review>> fetchReviews() async {
+  Stream<List<Review>> fetchReviews() async* {
     final campsiteSnapshot = await FirebaseFirestore.instance
         .collectionGroup('campsites')
         .where('id', isEqualTo: campsiteId)
@@ -47,10 +47,10 @@ class ReviewsWidget extends StatelessWidget {
         );
       }));
 
-      return reviews; // Return the reviews list
+      yield reviews; // Return the reviews list
     } else {
       print('campsite does not exist');
-      return []; // Return an empty list if the campsite document doesn't exist
+      yield []; // Return an empty list if the campsite document doesn't exist
     }
   }
 
@@ -58,14 +58,10 @@ class ReviewsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm');
 
-    return FutureBuilder<List<Review>>(
-      future: fetchReviews(),
+    return StreamBuilder<List<Review>>(
+      stream: fetchReviews(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(
-            color: Colors.transparent,
-          );
-        } else if (snapshot.hasError) {
+         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
         } else {
           final reviews = snapshot.data ?? [];

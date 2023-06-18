@@ -10,7 +10,7 @@ class AverageRatingText extends StatelessWidget {
     required this.campsiteid,
   });
 
-  Future<List<QueryDocumentSnapshot>> fetchReviews() async {
+  Stream<List<QueryDocumentSnapshot>> fetchReviews() async* {
     final campsiteSnapshot = await FirebaseFirestore.instance
         .collectionGroup('campsites')
         .where('id', isEqualTo: campsiteid)
@@ -22,39 +22,42 @@ class AverageRatingText extends StatelessWidget {
       final reviewsSnapshot =
           await campsiteDoc.reference.collection('reviews').get();
 
-      return reviewsSnapshot.docs; // Return the reviews snapshot
+      yield reviewsSnapshot.docs; // Return the reviews snapshot
     } else {
       print('campsite does not exist');
-      return []; // Return an empty list if the campsite document doesn't exist
+      yield []; // Return an empty list if the campsite document doesn't exist
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<QueryDocumentSnapshot>>(
-        future: fetchReviews(),
+    return StreamBuilder<List<QueryDocumentSnapshot>>(
+        stream: fetchReviews(),
         builder: (BuildContext context,
             AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
           if (snapshot.hasError) {
             return Text('Error fetching reviews');
           }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator(
-              color: Colors.transparent,
+          // if (snapshot.connectionState == ConnectionState.waiting) {
+          //   return CircularProgressIndicator(
+          //     color: Colors.transparent,
+          //   );
+          // }
+
+          if (snapshot.hasData) {
+            final reviews = snapshot.data!;
+            var avrRating = calculateAverageRating(reviews);
+
+            avrRating.isNaN ? avrRating = 0 : avrRating = avrRating;
+
+            final averageRating = avrRating.toStringAsFixed(1);
+            return Text(
+              averageRating,
+              style: TextStyle(fontSize: 22),
             );
           }
-
-          final reviews = snapshot.data!;
-          var avrRating = calculateAverageRating(reviews);
-
-          avrRating.isNaN ? avrRating = 0 : avrRating = avrRating;
-
-          final averageRating = avrRating.toStringAsFixed(1);
-          return Text(
-            averageRating,
-            style: TextStyle(fontSize: 22),
-          );
+          return Container();
         });
   }
 }

@@ -43,7 +43,7 @@ class _ReviewPageState extends State<ReviewPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Container(
-              color: const Color(0xFF3F3D56),
+              color: Theme.of(context).primaryColor,
               padding: const EdgeInsets.all(16.0),
               child: const Text(
                 'Add a Review',
@@ -132,7 +132,7 @@ class _ReviewPageState extends State<ReviewPage> {
                         ),
                       ),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF3F3D56),
+                        backgroundColor: Theme.of(context).primaryColor,
                         padding: const EdgeInsets.symmetric(vertical: 16.0),
                       ),
                     ),

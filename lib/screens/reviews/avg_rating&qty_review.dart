@@ -11,7 +11,7 @@ class AverageRatingAndQtyReviews extends StatelessWidget {
     required this.campsiteId,
   });
 
-  Future<List<QueryDocumentSnapshot>> fetchReviews() async {
+  Stream<List<QueryDocumentSnapshot>> fetchReviews() async* {
     final campsiteSnapshot = await FirebaseFirestore.instance
         .collectionGroup('campsites')
         .where('id', isEqualTo: campsiteId)
@@ -23,60 +23,62 @@ class AverageRatingAndQtyReviews extends StatelessWidget {
       final reviewsSnapshot =
           await campsiteDoc.reference.collection('reviews').get();
 
-      return reviewsSnapshot.docs; // Return the reviews snapshot
+      yield reviewsSnapshot.docs; // Return the reviews snapshot
     } else {
       print('campsite does not exist');
-      return []; // Return an empty list if the campsite document doesn't exist
+      yield []; // Return an empty list if the campsite document doesn't exist
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<QueryDocumentSnapshot>>(
-      future: fetchReviews(),
+    return StreamBuilder<List<QueryDocumentSnapshot>>(
+      stream: fetchReviews(),
       builder: (BuildContext context,
           AsyncSnapshot<List<QueryDocumentSnapshot>> snapshot) {
         if (snapshot.hasError) {
           return Text('Error fetching reviews');
         }
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(
-            color: Colors.transparent,
+        // if (snapshot.connectionState == ConnectionState.waiting) {
+        //   return CircularProgressIndicator(
+        //     color: Colors.transparent,
+        //   );
+        // }
+        if (snapshot.hasData) {
+          final reviews = snapshot.data!;
+          final averageRating = calculateAverageRating(reviews);
+          final qtyReviews = reviews.length;
+
+          return Row(
+            children: [
+              RatingBar.builder(
+                initialRating: averageRating.isNaN ? 0 : averageRating,
+                minRating: 1,
+                direction: Axis.horizontal,
+                allowHalfRating: true,
+                ignoreGestures: true,
+                itemCount: 5,
+                itemSize: 24.0,
+                itemPadding: EdgeInsets.zero,
+                itemBuilder: (context, _) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
+                ),
+                onRatingUpdate: (rating) {},
+              ),
+              SizedBox(width: 8.0),
+              Text(
+                '(${qtyReviews.toString()}) Reviews',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey[600],
+                ),
+              ),
+            ],
           );
         }
-
-        final reviews = snapshot.data!;
-        final averageRating = calculateAverageRating(reviews);
-        final qtyReviews = reviews.length;
-
-        return Row(
-          children: [
-            RatingBar.builder(
-              initialRating: averageRating.isNaN ? 0 : averageRating,
-              minRating: 1,
-              direction: Axis.horizontal,
-              allowHalfRating: true,
-              ignoreGestures: true,
-              itemCount: 5,
-              itemSize: 24.0,
-              itemPadding: EdgeInsets.zero,
-              itemBuilder: (context, _) => const Icon(
-                Icons.star,
-                color: Colors.amber,
-              ),
-              onRatingUpdate: (rating) {},
-            ),
-            SizedBox(width: 8.0),
-            Text(
-              '(${qtyReviews.toString()}) Reviews',
-              style: TextStyle(
-                fontSize: 16,
-                color: Colors.grey[600],
-              ),
-            ),
-          ],
-        );
+        return Container();
       },
     );
   }
