@@ -17,7 +17,6 @@ import 'package:my_camp/screens/reviews/avg_rating&qty_review.dart';
 import 'package:my_camp/screens/reviews/get_avg_rating_text.dart';
 import 'package:my_camp/screens/reviews/qty_review_text.dart';
 import 'package:my_camp/screens/reviews/reviews_widget.dart';
-import '../data/models/reviews.dart';
 import 'review_page.dart';
 import 'package:my_camp/data/models/faq.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';

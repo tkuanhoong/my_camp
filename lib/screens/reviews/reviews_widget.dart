@@ -81,8 +81,9 @@ class ReviewsWidget extends StatelessWidget {
                         width: 48.0,
                         child: CircleAvatar(
                           radius: 24.0,
+                          // ignore: unnecessary_null_comparison
                           backgroundImage: review.imagePath != null
-                              ? Image.network(review.imagePath!).image
+                              ? Image.network(review.imagePath).image
                               : AssetImage('assets/images/profile_image.jpg'),
                         ),
                       ),

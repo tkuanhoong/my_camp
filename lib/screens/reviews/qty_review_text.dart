@@ -3,7 +3,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../data/models/campsite.dart';
-import '../campsite_details.dart';
 
 class QtyReviewsText extends StatelessWidget {
   final String campsiteid;
