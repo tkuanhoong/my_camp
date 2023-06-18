@@ -50,7 +50,7 @@ class AverageRatingText extends StatelessWidget {
 
           avrRating.isNaN ? avrRating = 0 : avrRating = avrRating;
 
-          final averageRating = avrRating.toString();
+          final averageRating = avrRating.toStringAsFixed(1);
           return Text(
             averageRating,
             style: TextStyle(fontSize: 22),
