@@ -147,7 +147,7 @@ final GoRouter router = GoRouter(
                               ),
                               BlocProvider(
                                 create: (context) => BookingBloc(
-                                        context.read<BookingRepository>()),
+                                    context.read<BookingRepository>()),
                               )
                             ],
                             child: CampsiteDetails(
@@ -217,24 +217,32 @@ final GoRouter router = GoRouter(
                   name: 'bookings',
                   path: 'bookings',
                   builder: (BuildContext context, GoRouterState state) {
-                    return BlocProvider(create:(context) => BookingBloc(context.read<BookingRepository>()),child: const BookingsPage());
+                    return BlocProvider(
+                        create: (context) =>
+                            BookingBloc(context.read<BookingRepository>()),
+                        child: const BookingsPage());
                   },
                 ),
                 GoRoute(
                   name: 'view-favourite',
                   path: 'favourites',
                   builder: (BuildContext context, GoRouterState state) {
-                    return const ViewFavouriteCampsite();
+                    // return const ViewFavouriteCampsite();
+                    return BlocProvider(
+                      create: (context) => SearchBloc(
+                          repository: context.read<CampsiteRepository>()),
+                      child: const ViewFavouriteCampsite(),
+                    );
                   },
                 )
               ]),
-              GoRoute(
-                  name: 'booking_success',
-                  path: 'bookingSuccess',
-                  builder: (BuildContext context, GoRouterState state) {
-                    return const BookingSuccessPage();
-                  },
-                )
+          GoRoute(
+            name: 'booking_success',
+            path: 'bookingSuccess',
+            builder: (BuildContext context, GoRouterState state) {
+              return const BookingSuccessPage();
+            },
+          )
         ]),
     // GoRoute(
     //     name: 'otp',

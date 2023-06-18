@@ -315,6 +315,13 @@ class _CampsiteDetailsState extends State<CampsiteDetails> {
               return const Center(child: CircularProgressIndicator());
             } else if (state is CampsiteLoaded) {
               _campsite = state.campsite;
+              count = count + 1;
+              if (count == 2) {
+                print('x');
+                isFavourite = _campsite.favourites!
+                    .contains(context.read<SessionCubit>().state.id);
+                print(isFavourite);
+              }
               _expansionPanelItems = [
                 ...state.campsite.faq!.asMap().entries.map((entry) {
                   if (entry.key < _expansionPanelItems.length) {
