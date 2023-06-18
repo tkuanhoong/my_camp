@@ -223,18 +223,78 @@ final GoRouter router = GoRouter(
                         child: const BookingsPage());
                   },
                 ),
+                // GoRoute(
+                //   name: 'view-favourite',
+                //   path: 'favourites',
+                //   builder: (BuildContext context, GoRouterState state) {
+                //     // return const ViewFavouriteCampsite();
+                //     return BlocProvider(
+                //       create: (context) => SearchBloc(
+                //           repository: context.read<CampsiteRepository>()),
+                //       child: const ViewFavouriteCampsite(),
+                //     );
+                //   },
+                // ),
+                ////////////////
                 GoRoute(
                   name: 'view-favourite',
                   path: 'favourites',
                   builder: (BuildContext context, GoRouterState state) {
-                    // return const ViewFavouriteCampsite();
                     return BlocProvider(
                       create: (context) => SearchBloc(
                           repository: context.read<CampsiteRepository>()),
                       child: const ViewFavouriteCampsite(),
                     );
                   },
-                )
+                  // routes: [
+                  //   GoRoute(
+                  //     path: 'campsite/:campsiteId',
+                  //     name: 'favourite-campsite-details',
+                  //     builder: (BuildContext context, GoRouterState state) {
+                  //       return MultiBlocProvider(
+                  //         providers: [
+                  //           BlocProvider.value(value: _campsiteBloc),
+                  //           BlocProvider(
+                  //             create: (context) => CampsiteEventBloc(
+                  //                 campsiteEventRepository: context
+                  //                     .read<CampsiteEventRepository>()),
+                  //           ),
+                  //           BlocProvider(
+                  //             create: (context) => BookingBloc(
+                  //                 context.read<BookingRepository>()),
+                  //           )
+                  //         ],
+                  //         child: CampsiteDetails(
+                  //             campsiteId: state.params['campsiteId']!),
+                  //       );
+                  //     },
+                  //   ),
+                  // ]
+                ),
+                //////////////////////
+                GoRoute(
+                  path: 'campsite/:campsiteId',
+                  name: 'favourite-campsite-details',
+                  builder: (BuildContext context, GoRouterState state) {
+                    return MultiBlocProvider(
+                      providers: [
+                        BlocProvider.value(value: _campsiteBloc),
+                        BlocProvider(
+                          create: (context) => CampsiteEventBloc(
+                              campsiteEventRepository:
+                                  context.read<CampsiteEventRepository>()),
+                        ),
+                        BlocProvider(
+                          create: (context) =>
+                              BookingBloc(context.read<BookingRepository>()),
+                        )
+                      ],
+                      child: CampsiteDetails(
+                          campsiteId: state.params['campsiteId']!),
+                    );
+                  },
+                ),
+                /////////////////////
               ]),
           GoRoute(
             name: 'booking_success',
