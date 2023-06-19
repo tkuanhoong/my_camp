@@ -1,8 +1,10 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
-
+import 'package:rxdart/rxdart.dart';
 import 'auth/verify_email_screen.dart';
 
 class Home extends StatefulWidget {
@@ -14,6 +16,22 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   final FocusNode _focusNode = FocusNode();
+  @override
+  void initState() {
+    // TODO: implement initState
+    // final messageStreamController = BehaviorSubject<RemoteMessage>();
+
+    // FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    //   if (kDebugMode) {
+    //     print('Handling a foreground message: ${message.messageId}');
+    //     print('Message data: ${message.data}');
+    //     print('Message notification: ${message.notification?.title}');
+    //     print('Message notification: ${message.notification?.body}');
+    //   }
+
+    //   messageStreamController.sink.add(message);
+    // });
+  }
 
   @override
   void dispose() {
@@ -31,7 +49,7 @@ class _HomeState extends State<Home> {
             break;
           case "Favorites":
             context.goNamed('view-favourite');
-                    // print('Tapped on $label');
+            // print('Tapped on $label');
             break;
           case "My Bookings":
             context.goNamed('bookings');
@@ -119,180 +137,185 @@ class _HomeState extends State<Home> {
               return VerifyEmailScreen(email: state.email);
             }
             return SafeArea(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                        child: Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(),
-                                  borderRadius: BorderRadius.circular(25),
-                                ),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    context.goNamed('search');
-                                  },
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: TextFormField(
-                                          readOnly: true,
-                                          focusNode: _focusNode,
-                                          onTap: () {
-                                            context.goNamed('search');
-                                          },
-                                          decoration: const InputDecoration(
-                                            suffixIcon: Icon(Icons.search, color: Colors.grey,),
-                                            hintText: 'Search',
-                                            border: InputBorder.none,
-                                            contentPadding: EdgeInsets.symmetric(horizontal: 20,vertical: 10),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              decoration: BoxDecoration(
+                                border: Border.all(),
+                                borderRadius: BorderRadius.circular(25),
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  context.goNamed('search');
+                                },
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: TextFormField(
+                                        readOnly: true,
+                                        focusNode: _focusNode,
+                                        onTap: () {
+                                          context.goNamed('search');
+                                        },
+                                        decoration: const InputDecoration(
+                                          suffixIcon: Icon(
+                                            Icons.search,
+                                            color: Colors.grey,
                                           ),
+                                          hintText: 'Search',
+                                          border: InputBorder.none,
+                                          contentPadding: EdgeInsets.symmetric(
+                                              horizontal: 20, vertical: 10),
                                         ),
                                       ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: const Icon(Icons.person),
-                              onPressed: () {
-                                context.goNamed('profile');
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                                16.0), // Set circular border radius
-                          ),
-                          color: Colors.indigo[50], // Set light grey color
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: GridView.count(
-                                  // crossAxisSpacing: 10,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  crossAxisCount: 3,
-                                  shrinkWrap: true,
-                                  childAspectRatio: 1,
-                                  children: [
-                                    _buildGridItem('My Bookings', Icons.event),
-                                    _buildGridItem(
-                                        'Favorites', Icons.favorite_rounded),
-                                    _buildGridItem('My Campsites', Icons.landscape),
+                                    ),
                                   ],
                                 ),
                               ),
-                            ],
+                            ),
                           ),
-                        ),
+                          IconButton(
+                            icon: const Icon(Icons.person),
+                            onPressed: () {
+                              context.goNamed('profile');
+                            },
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Recommended Campsites',
-                              style: TextStyle(
-                                  // fontWeight: FontWeight.bold,
-                                  // fontSize: 16,
-                                  ),
-                            ),
-                            Row(children: const <Widget>[
-                              Text('See all',
-                                  style: TextStyle(
-                                    // fontSize: 16,
-                                    decoration: TextDecoration.underline,
-                                  )),
-                              Icon(Icons.arrow_forward),
-                            ]),
-                          ],
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(15, 20, 15, 0),
+                      child: Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                              16.0), // Set circular border radius
                         ),
-                      ),
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                        color: Colors.indigo[50], // Set light grey color
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
                               child: GridView.count(
-                                crossAxisSpacing: 10,
+                                // crossAxisSpacing: 10,
                                 physics: const NeverScrollableScrollPhysics(),
-                                crossAxisCount: 2,
+                                crossAxisCount: 3,
                                 shrinkWrap: true,
-                                childAspectRatio: 1.0,
+                                childAspectRatio: 1,
                                 children: [
-                                  _buildCard('Campsite 1', 'Johor Bahru, Johor',
-                                      'assets/images/home_campsite1.png'),
-                                  _buildCard('Campsite 2', 'Perak, Ipoh',
-                                      'assets/images/home_campsite2.png'),
+                                  _buildGridItem('My Bookings', Icons.event),
+                                  _buildGridItem(
+                                      'Favorites', Icons.favorite_rounded),
+                                  _buildGridItem(
+                                      'My Campsites', Icons.landscape),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            const Text(
-                              'Upcoming Campsites',
-                              style: TextStyle(
-                                  // fontWeight: FontWeight.bold,
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Recommended Campsites',
+                            style: TextStyle(
+                                // fontWeight: FontWeight.bold,
+                                // fontSize: 16,
+                                ),
+                          ),
+                          Row(children: const <Widget>[
+                            Text('See all',
+                                style: TextStyle(
                                   // fontSize: 16,
-                                  ),
-                            ),
-                            Row(children: const <Widget>[
-                              Text('See all',
-                                  style: TextStyle(
-                                    // fontSize: 16,
-                                    decoration: TextDecoration.underline,
-                                  )),
-                              Icon(Icons.arrow_forward),
-                            ]),
-                          ],
-                        ),
+                                  decoration: TextDecoration.underline,
+                                )),
+                            Icon(Icons.arrow_forward),
+                          ]),
+                        ],
                       ),
-                      Container(
-                        padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: GridView.count(
-                                crossAxisSpacing: 10,
-                                physics: const NeverScrollableScrollPhysics(),
-                                crossAxisCount: 2,
-                                shrinkWrap: true,
-                                childAspectRatio: 1.0,
-                                children: [
-                                  _buildCard('Campsite 1', 'Johor Bahru, Johor',
-                                      'assets/images/home_campsite1.png'),
-                                  _buildCard('Campsite 2', 'Perak, Ipoh',
-                                      'assets/images/home_campsite2.png'),
-                                ],
-                              ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GridView.count(
+                              crossAxisSpacing: 10,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 2,
+                              shrinkWrap: true,
+                              childAspectRatio: 1.0,
+                              children: [
+                                _buildCard('Campsite 1', 'Johor Bahru, Johor',
+                                    'assets/images/home_campsite1.png'),
+                                _buildCard('Campsite 2', 'Perak, Ipoh',
+                                    'assets/images/home_campsite2.png'),
+                              ],
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 30, 20, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Upcoming Campsites',
+                            style: TextStyle(
+                                // fontWeight: FontWeight.bold,
+                                // fontSize: 16,
+                                ),
+                          ),
+                          Row(children: const <Widget>[
+                            Text('See all',
+                                style: TextStyle(
+                                  // fontSize: 16,
+                                  decoration: TextDecoration.underline,
+                                )),
+                            Icon(Icons.arrow_forward),
+                          ]),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Expanded(
+                            child: GridView.count(
+                              crossAxisSpacing: 10,
+                              physics: const NeverScrollableScrollPhysics(),
+                              crossAxisCount: 2,
+                              shrinkWrap: true,
+                              childAspectRatio: 1.0,
+                              children: [
+                                _buildCard('Campsite 1', 'Johor Bahru, Johor',
+                                    'assets/images/home_campsite1.png'),
+                                _buildCard('Campsite 2', 'Perak, Ipoh',
+                                    'assets/images/home_campsite2.png'),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              );
+              ),
+            );
           },
         ),
       ),
