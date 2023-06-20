@@ -48,10 +48,7 @@ class BookingsPage extends StatelessWidget {
                     child: ListView.builder(
                       itemCount: state.bookings.length,
                       itemBuilder: (context, index) {
-                        return _buildBookingListView(
-                            state.bookings[index],
-                            state.campsites[index],
-                            state.campsiteEvents[index]);
+                        return _buildBookingListView(state.bookings[index]);
                       },
                     ),
                   ),
@@ -65,8 +62,9 @@ class BookingsPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBookingListView(
-      Booking booking, Campsite campsite, CampsiteEventModel campsiteEvent) {
+  Widget _buildBookingListView(Booking booking) {
+    final Campsite campsite = booking.campsite!;
+    final CampsiteEventModel campsiteEvent = booking.campsiteEvent!;
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
       decoration: BoxDecoration(
@@ -90,10 +88,11 @@ class BookingsPage extends StatelessWidget {
                     children: [
                       Text(
                         'Campsite name: ${campsite.name}\nEvent: ${campsiteEvent.name}\nAmount paid: RM ${booking.amount / 100}\nAddress: ${campsite.address}\nStart Date: ${_formatEventDate(campsiteEvent.startDate)}\nEnd Date: ${_formatEventDate(campsiteEvent.endDate)}',
-                            style: const TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold // Replace with your desired color
-                              ),
+                        style: const TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight
+                                .bold // Replace with your desired color
+                            ),
                       ),
                     ],
                   ),

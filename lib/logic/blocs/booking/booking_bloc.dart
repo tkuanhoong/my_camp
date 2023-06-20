@@ -23,9 +23,7 @@ class BookingBloc extends Bloc<BookingEvent, BookingState> {
       emit(BookingsLoading());
       try {
         final List<Booking> bookingList = await bookingRepository.fetchUserBookings(event.userId);
-        final List<Campsite> campsiteList = await bookingRepository.fetchBookedCampsite(event.userId);
-        final List<CampsiteEventModel> campsiteEventList = await bookingRepository.fetchBookedCampsiteEvents(event.userId);
-        emit(BookingsFetched(bookings: bookingList, campsites: campsiteList, campsiteEvents: campsiteEventList));
+        emit(BookingsFetched(bookings: bookingList));
       } catch (e) {
         emit(BookingsFetchError(message: e.toString()));
       }

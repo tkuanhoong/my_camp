@@ -19,9 +19,7 @@ class BookingSuccess extends BookingState{
 
 class BookingsFetched extends BookingState{
   final List<Booking> bookings;
-  final List<Campsite> campsites;
-  final List<CampsiteEventModel> campsiteEvents;
-  const BookingsFetched({required this.bookings,required this.campsites,required this.campsiteEvents});
+  const BookingsFetched({required this.bookings});
 
   @override
   List<Object> get props => [bookings];

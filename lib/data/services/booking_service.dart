@@ -17,15 +17,6 @@ class BookingService {
         .toList();
   }
 
-  Future<CampsiteEventModel> fetchSingleCampsiteEvent(id) async {
-    QuerySnapshot documents = await _db
-        .collectionGroup('campsite_events')
-        .where('id', isEqualTo: id)
-        .get();
-      return CampsiteEventModel.fromMap(
-          documents.docs.first.data() as Map<String, dynamic>);
-  }
-
   Future<void> addBooking(CampsiteEventModel campsiteEvent) async {
     final userId = FirebaseAuth.instance.currentUser!.uid;
     QuerySnapshot documents = await _db

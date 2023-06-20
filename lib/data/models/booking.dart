@@ -2,6 +2,8 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:my_camp/data/models/campsite.dart';
+import 'package:my_camp/data/models/campsite_event_model.dart';
 
 class Booking extends Equatable {
   final String? id;
@@ -9,12 +11,17 @@ class Booking extends Equatable {
   final int amount;
   final DateTime createdAt;
   final String campsiteEventId;
+  final Campsite? campsite;
+  final CampsiteEventModel? campsiteEvent;
+  
   const Booking({
     this.id,
     required this.userId,
     required this.amount,
     required this.createdAt,
     required this.campsiteEventId,
+    this.campsite,
+    this.campsiteEvent
   });
 
   Booking copyWith({
@@ -23,6 +30,8 @@ class Booking extends Equatable {
     int? amount,
     DateTime? createdAt,
     String? campsiteEventId,
+    Campsite? campsite,
+    CampsiteEventModel? campsiteEvent,
   }) {
     return Booking(
       id: id ?? this.id,
@@ -30,6 +39,8 @@ class Booking extends Equatable {
       amount: amount ?? this.amount,
       createdAt: createdAt ?? this.createdAt,
       campsiteEventId: campsiteEventId ?? this.campsiteEventId,
+      campsite: campsite ?? this.campsite,
+      campsiteEvent: campsiteEvent ?? this.campsiteEvent,
     );
   }
 
@@ -40,6 +51,8 @@ class Booking extends Equatable {
       'amount': amount,
       'createdAt': Timestamp.fromDate(createdAt),
       'campsiteEventId': campsiteEventId,
+      'campsite': campsite?.toMap(),
+      'campsiteEvent': campsiteEvent?.toMap(),
     };
   }
 
@@ -50,6 +63,8 @@ class Booking extends Equatable {
       amount: map['amount'] as int,
       createdAt: (map['createdAt'] as Timestamp).toDate(),
       campsiteEventId: map['campsiteEventId'] as String,
+      campsite: map['campsite'] != null ? Campsite.fromMap(map['campsite'] as Map<String, dynamic>) : null,
+      campsiteEvent: map['campsiteEvent'] != null ? CampsiteEventModel.fromMap(map['campsiteEvent'] as Map<String, dynamic>) : null,
     );
   }
 
@@ -61,5 +76,5 @@ class Booking extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [id, userId, amount, createdAt, campsiteEventId];
+  List<Object?> get props => [id, userId, amount, createdAt, campsiteEventId, campsite, campsiteEvent];
 }
