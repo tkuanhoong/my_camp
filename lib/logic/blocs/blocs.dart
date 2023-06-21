@@ -4,6 +4,7 @@ import 'package:my_camp/data/repository/auth_repository.dart';
 import 'package:my_camp/data/repository/booking_repository.dart';
 import 'package:my_camp/data/repository/campsite_event_repository.dart';
 import 'package:my_camp/data/repository/campsite_repository.dart';
+import 'package:my_camp/data/repository/report_repository.dart';
 import 'package:my_camp/data/repository/user_repository.dart';
 import 'package:my_camp/logic/blocs/auth/auth_bloc.dart';
 import 'package:my_camp/logic/blocs/profile/profile_bloc.dart';
@@ -23,7 +24,8 @@ class BlocWidget extends StatelessWidget {
           RepositoryProvider.value(value: CampsiteRepository()),
           RepositoryProvider.value(value: UserRepository()),
           RepositoryProvider.value(value: CampsiteEventRepository()),
-          RepositoryProvider.value(value: BookingRepository())
+          RepositoryProvider.value(value: BookingRepository()),
+          RepositoryProvider.value(value: ReportRepository())
         ],
         child: MultiBlocProvider(providers: [
           BlocProvider<AuthBloc>(

@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:my_camp/data/models/campsite.dart';
 import 'package:my_camp/data/models/campsite_event_model.dart';
+import 'package:my_camp/data/models/user_model.dart';
 
 class Booking extends Equatable {
   final String? id;
@@ -13,6 +14,7 @@ class Booking extends Equatable {
   final String campsiteEventId;
   final Campsite? campsite;
   final CampsiteEventModel? campsiteEvent;
+  final UserModel? user;
   
   const Booking({
     this.id,
@@ -21,7 +23,8 @@ class Booking extends Equatable {
     required this.createdAt,
     required this.campsiteEventId,
     this.campsite,
-    this.campsiteEvent
+    this.campsiteEvent,
+    this.user,
   });
 
   Booking copyWith({
@@ -32,6 +35,7 @@ class Booking extends Equatable {
     String? campsiteEventId,
     Campsite? campsite,
     CampsiteEventModel? campsiteEvent,
+    UserModel? user,
   }) {
     return Booking(
       id: id ?? this.id,
@@ -41,6 +45,7 @@ class Booking extends Equatable {
       campsiteEventId: campsiteEventId ?? this.campsiteEventId,
       campsite: campsite ?? this.campsite,
       campsiteEvent: campsiteEvent ?? this.campsiteEvent,
+      user: user ?? this.user,
     );
   }
 
@@ -53,6 +58,7 @@ class Booking extends Equatable {
       'campsiteEventId': campsiteEventId,
       'campsite': campsite?.toMap(),
       'campsiteEvent': campsiteEvent?.toMap(),
+      'user': user?.toMap(),
     };
   }
 
@@ -65,6 +71,7 @@ class Booking extends Equatable {
       campsiteEventId: map['campsiteEventId'] as String,
       campsite: map['campsite'] != null ? Campsite.fromMap(map['campsite'] as Map<String, dynamic>) : null,
       campsiteEvent: map['campsiteEvent'] != null ? CampsiteEventModel.fromMap(map['campsiteEvent'] as Map<String, dynamic>) : null,
+      user: map['user'] != null ? UserModel.fromMap(map['user'] as Map<String, dynamic>) : null,
     );
   }
 
@@ -76,5 +83,5 @@ class Booking extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [id, userId, amount, createdAt, campsiteEventId, campsite, campsiteEvent];
+  List<Object?> get props => [id, userId, amount, createdAt, campsiteEventId, campsite, campsiteEvent,user];
 }

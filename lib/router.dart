@@ -4,12 +4,14 @@ import 'package:go_router/go_router.dart';
 import 'package:my_camp/data/repository/booking_repository.dart';
 import 'package:my_camp/data/repository/campsite_event_repository.dart';
 import 'package:my_camp/data/repository/campsite_repository.dart';
+import 'package:my_camp/data/repository/report_repository.dart';
 import 'package:my_camp/data/repository/user_repository.dart';
 import 'package:my_camp/logic/blocs/booking/booking_bloc.dart';
 import 'package:my_camp/logic/blocs/campsite/campsite_bloc.dart';
 import 'package:my_camp/logic/blocs/campsite_event/campsite_event_bloc.dart';
 import 'package:my_camp/logic/blocs/profile/profile_bloc.dart';
 import 'package:my_camp/logic/blocs/search/search_bloc.dart';
+import 'package:my_camp/logic/cubits/report/report_cubit.dart';
 import 'package:my_camp/logic/cubits/session/session_cubit.dart';
 import 'package:my_camp/screens/add_product_page.dart';
 import 'package:my_camp/screens/auth/forgot_screen.dart';
@@ -21,6 +23,7 @@ import 'package:my_camp/screens/campsites/update_campsite.dart';
 import 'package:my_camp/screens/home.dart';
 import 'package:my_camp/screens/manage_campsite.dart';
 import 'package:my_camp/screens/manage_product_page.dart';
+import 'package:my_camp/screens/pdf/pdf_preview_page.dart';
 import 'package:my_camp/screens/search/search_campsite_page.dart';
 import 'package:my_camp/screens/update_profile.dart';
 import 'package:my_camp/screens/welcome.dart';
@@ -179,6 +182,18 @@ final GoRouter router = GoRouter(
                                 );
                               },
                               routes: [
+                                GoRoute(
+                                  path: "pdfPreview",
+                                  name: "pdfPreview",
+                                  builder: (context, state) {
+                                    return BlocProvider(
+                                        create: (context) => ReportCubit(
+                                            context.read<ReportRepository>()),
+                                        child: PdfPreviewPage(
+                                            campsiteId:
+                                                state.params['campsiteId']!));
+                                  },
+                                ),
                                 GoRoute(
                                   path: "addProduct",
                                   name: 'campsite-add-product',
